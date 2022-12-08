@@ -19,7 +19,7 @@ ng g library custom-lib --prefix cl
 ![public_api](./images/public_api.png)
 
 **`ВАЖНО! Всё то, что планируется к использаванию другими приложениями, не достаточно просто задекларировать в модуле.`**
-**`Так же необходимо добавить этот component/service/modul в файл public-api.ts и экспортировать этот component/service/modul.`**
+**`Так же необходимо добавить этот component/service/module в файл public-api.ts и экспортировать этот component/service/module.`**
 **`То есть, всё что public, то экспортируется.`**
 
 Для того чтобы связать библиотеку и ваше приложение, необходимо добавить в `app.module.ts` вашего приложения основной модуль библиотеки.
