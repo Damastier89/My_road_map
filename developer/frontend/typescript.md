@@ -4,7 +4,7 @@
 - [Виды типизации](#typing)
 - [Типы данных в TypeScript](#typing-in-typescript)
 - [Модификаторы доступа. Access Modifiers](#access-modifiers)
-- [Приведение типов](#type-assertions)
+- [Приведение типов. Type Assertions](#type-assertions)
 - [Интерфейсы в TypeScript](#interface-in-typescript)
 - [Определение типов в TypeScript. Type Aliases](#type-aliases-in-typeScript)
 - [Смешанные типы. Hybrid Types](#hybrid-types)
@@ -532,7 +532,7 @@
 ```
 > В TypeScript можно ограничить возможные значения переменной типа значениями другой переменной типа, используя ключевое слово `extends`. Для этого нужно создать переменную типа и использовать ее имя в качестве условия для ограничения типа другой переменной.
 
-Ограничить возможные значения типа переменной B значениями типа переменной A:
+- Ограничить возможные значения типа переменной `B` значениями типа переменной `A`:
 ```typescript
     type A = "foo" | "bar" | "baz";
     type B<T extends A> = T;
