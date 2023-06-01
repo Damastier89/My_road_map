@@ -6,6 +6,7 @@
 * [CSS](./css.md)
 * [DATA STRUCTURE](./data_structure.md)
 * [DATA and TIME](./date-and-time.md)
+* [DOM](./dom.md)
 * [GIT](./git.md)
 * [HTML](./html.md)
 * [JAVASCRIPT](./javaScript.md)
