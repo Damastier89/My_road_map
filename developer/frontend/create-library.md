@@ -2,9 +2,10 @@
 
 Для создания библиотеки используйте команду:
 ```TypeScript
-ng g library @custom-lib --prefix=cl --skip-ts-config
+ng g library @library/custom-lib --prefix=cl --skip-ts-config
 ```
  - `ng g library` - создаст в существующим проекте библиотеку
+ - `@library` - корневая директория
  - `custom-lib` - название библиотеки
  - `--prefix cl` - добавит префикс, который будет подставляться к селектору компонентов (cl-custom-lib)
 
@@ -22,7 +23,16 @@ ng g library @custom-lib --prefix=cl --skip-ts-config
 **`Так же необходимо добавить этот component/service/module в файл public-api.ts и экспортировать этот component/service/module.`**
 **`То есть, всё что public, то экспортируется.`**
 
-Для того чтобы связать библиотеку и ваше приложение, необходимо добавить в `app.module.ts` вашего приложения основной модуль библиотеки.
+### Далее необходимо собрать библиотеку
+Добавляем в `package.json` приложения следующую команду
+```json
+  "build:library": "./node_modules/.bin/ng build @library/custom-lib --configuration production"
+```
+> ВАЖНО! Данный префикс `--configuration production` актуален для angular 12 версии.
+
+> Таким образом мы получим папку `dist` и далее сможем подключить библиотеку к приложению.
+
+> Для того чтобы связать библиотеку и ваше приложение, необходимо добавить в `app.module.ts` вашего приложения основной модуль библиотеки.
 
 ![module](./images/module.png)
 
