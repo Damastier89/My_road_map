@@ -2,4 +2,4 @@
 
 1. **Developer**
    - [Frontend](./frontend/README.md)
-   - [Backend](./backend/README.md)
+   - [Architectural patterns](./architectural_patterns/README.md)
