@@ -1,13 +1,15 @@
 # Создание своей библиотеки в Angular проекте.
 
 Для создания библиотеки используйте команду:
+
 ```TypeScript
 ng g library @library/custom-lib --prefix=cl --skip-ts-config
 ```
- - `ng g library` - создаст в существующим проекте библиотеку
- - `@library` - корневая директория
- - `custom-lib` - название библиотеки
- - `--prefix cl` - добавит префикс, который будет подставляться к селектору компонентов (cl-custom-lib)
+
+- `ng g library` - создаст в существующим проекте библиотеку
+- `@library` - корневая директория
+- `custom-lib` - название библиотеки
+- `--prefix cl` - добавит префикс, который будет подставляться к селектору компонентов (cl-custom-lib)
 
 ![library](./images/library.png)
 
@@ -24,10 +26,21 @@ ng g library @library/custom-lib --prefix=cl --skip-ts-config
 **`То есть, всё что public, то экспортируется.`**
 
 ### Далее необходимо собрать библиотеку
+
 Добавляем в `package.json` приложения следующую команду
+
+- Angular 12
+
 ```json
   "build:library": "./node_modules/.bin/ng build @library/custom-lib --configuration production"
 ```
+
+- Angular 16
+
+```json
+  "build:library": "build @library/custom-lib --configuration production"
+```
+
 > ВАЖНО! Данный префикс `--configuration production` актуален для angular 12 версии.
 
 > Таким образом мы получим папку `dist` и далее сможем подключить библиотеку к приложению.
@@ -39,9 +52,11 @@ ng g library @library/custom-lib --prefix=cl --skip-ts-config
 ## Для удобства разработки
 
 Для удобства разработки библиотеки, можно добавить следующую команду в файл `package.json` :
+
 ```JSON
   "НАЗВАНИЕ_БИБЛИОТЕКИ" : "ng build НАЗВАНИЕ_БИБЛИОТЕКИ --watch"
-```        
+```
+
 1. Запускаем скрипт npm НАЗВАНИЕ_БИБЛИОТЕКИ
 2. Запускаем скрипт npm start
 
