@@ -12,6 +12,7 @@
 - [HTML](./html.md)
 - [JAVASCRIPT](./javaScript.md)
 - [MOBILE BROWSER](./mobile_browsers.md)
+- [REGULAR EXPRESSION](./regular-expressions.md)
 - [RXJS](./rxjs.md)
 - [TYPESCRIPT](./typescript.md)
 - [TESTING](./testing.md)
