@@ -15,8 +15,14 @@
 - [Type Guards](#type-guards)
 - [Функции утверждения. Assertion Functions](#assertion-functions)
 - [Декораторы в TypeScript](#decorators-in-typescript)
+- [Перегрузка функции в TypeScript](#function-overload)
+- [Типизация конструктора класса](#typing-class-constructor)
+- [Утверждение const](#const-assertion)
+- [Назначение типов](#assigning-types)
+- [Условные типы](#conditional-types)
 
 ## TypeScript
+
 > TypeScript - это язык программирования, который представляет собой расширение языка JavaScript и добавляет статическую типизацию. Он разработан компанией Microsoft и является open-source.
 
 > TypeScript был создан для того, чтобы помочь разработчикам более безопасно разрабатывать сложные проекты на JavaScript. Он позволяет задавать типы переменных, функций, интерфейсов, классов и других элементов, что уменьшает количество ошибок во время исполнения кода, такие как TypeError или ReferenceError.
@@ -33,17 +39,18 @@
 ---
 
 ## Typing
+
 Выделяют несколько видов типизации:
 
 1. Слабая и сильная (Строгая и нестрогая) типизация.
-> Сильная (строгая) типизация - это подход, который предполагает, что переменные имеют фиксированный тип и не могут быть изменены в процессе выполнения программы. В языках с такой типизацией (например, Java или C++) компилятор проверяет соответствие типов переменных еще на стадии компиляции и не позволит выполнить неправильные операции.
+   > Сильная (строгая) типизация - это подход, который предполагает, что переменные имеют фиксированный тип и не могут быть изменены в процессе выполнения программы. В языках с такой типизацией (например, Java или C++) компилятор проверяет соответствие типов переменных еще на стадии компиляции и не позволит выполнить неправильные операции.
 
 > С другой стороны, слабая (нестрогая) типизация - это подход, в котором переменные не имеют фиксированного типа, а тип переменной определяется только во время выполнения программы. Примеры языков со слабой типизацией включают Python, JavaScript и PHP.
 
 > Плюсом слабой типизации является более гибкий и быстрый код за счет возможности переиспользования переменных под разные типы, а также большая гибкость при работе с динамическими данными. Однако этот подход склонен к ошибкам во время выполнения программы, так как проверка типов не происходит на этапе компиляции.
 
 2. Статическая и динамическая типизация
-> Статическая типизация - это подход, при котором тип переменных фиксирован и определяется на стадии компиляции программы. Языки, использующие этот подход, например, Java и C++, требуют явного указания типа переменной.
+   > Статическая типизация - это подход, при котором тип переменных фиксирован и определяется на стадии компиляции программы. Языки, использующие этот подход, например, Java и C++, требуют явного указания типа переменной.
 
 > Динамическая типизация - это подход, при котором тип переменных может меняться во время выполнения программы. Примеры таких языков включают Python, Ruby и JavaScript
 
@@ -52,7 +59,7 @@
 > Динамическая типизация имеет преимущество в удобстве и гибкости, но увеличивает время отладки, так как ошибки типов не обнаруживаются на этапе компиляции.
 
 3. Явная и неявная типизация
-> Явная типизация - это подход, при котором тип переменной указывается явно при определении переменной. Примеры языков с явной типизацией включают Java, C++ и C#.
+   > Явная типизация - это подход, при котором тип переменной указывается явно при определении переменной. Примеры языков с явной типизацией включают Java, C++ и C#.
 
 > Неявная типизация - это подход, при котором тип переменной определяется автоматически компилятором на основе значения переменной. Примеры языков с неявной типизацией - Python, JavaScript и Ruby.
 
@@ -61,48 +68,55 @@
 > Неявная типизация обеспечивает более легкое и быстрое написание кода, так как не требует указания типов переменных при объявлении. Однако это увеличивает потенциальный риск ошибок типов в процессе выполнения программы.
 
 4. Структурная и номинативная типизация
-> Структурная типизация - это типаж, при котором тип определяется только структурой.
+   > Структурная типизация - это типаж, при котором тип определяется только структурой.
 
 ### ВАЖНО!!!
+
 > JavaScript использует слабую и динамическую типизацию, а также неявную и структурную типизацию. Это означает, что тип переменной определяется во время выполнения программы и может меняться, а тип переменной может быть определен автоматически компилятором на основе значения переменной.
 
 > TypeScript, напротив, использует сильную и статическую типизацию со строгим контролем компилятора на этапе компиляции. Это означает, что типы компонентов приложения определяются заранее и фиксируются на этапе компиляции, что позволяет избежать ошибок во время выполнения. TypeScript также поддерживает явную и номинативную типизацию, где тип переменной задается явно при объявлении, и тип сравнивается с номинальным типом компонента, который задается в определении интерфейсов в TypeScript.
 
 ### ВАЖНО!!!
+
 > Еще TypeScript есть два способа типизации классов - это типизация `static-side` и типизация `instance-side`.
 
 - `Static-side` - типизация относится к свойствам и методам класса, которые доступны напрямую через класс, а не через его экземпляр. Для типизации `static-side` используется статический класс, который может содержать статические свойства и методы. В статических методах `this` указывает на тип класса.
+
 ```typescript
-    class Person {
-      static species = "Homo sapiens";
-      static getName() {
-        return "Person";
-      }
-    
-      constructor(public name: string, public age: number) {}
-    }
-    
-    console.log(Person.species); // Homo sapiens
-    console.log(Person.getName()); // Person
+class Person {
+	static species = 'Homo sapiens'
+	static getName() {
+		return 'Person'
+	}
+
+	constructor(public name: string, public age: number) {}
+}
+
+console.log(Person.species) // Homo sapiens
+console.log(Person.getName()) // Person
 ```
+
 - `Instance-side` типизация относится к свойствам и методам объектов, созданных из класса. Для типизации instance-side используется интерфейс класса. В интерфейсе перечисляются свойства и методы, которые являются частью экземпляра класса.
+
 ```typescript
-    interface PersonInterface {
-      name: string;
-      age: number;
-      sayHello(): void;
-    }
-    
-    class Person implements PersonInterface {
-      constructor(public name: string, public age: number) {}
-    
-      sayHello() {
-        console.log(`Hello, my name is ${this.name}, and I am ${this.age} years old`);
-      }
-    }
-    
-    const person = new Person("Alice", 25);
-    person.sayHello(); // Hello, my name is Alice, and I am 25 years old
+interface PersonInterface {
+	name: string
+	age: number
+	sayHello(): void
+}
+
+class Person implements PersonInterface {
+	constructor(public name: string, public age: number) {}
+
+	sayHello() {
+		console.log(
+			`Hello, my name is ${this.name}, and I am ${this.age} years old`
+		)
+	}
+}
+
+const person = new Person('Alice', 25)
+person.sayHello() // Hello, my name is Alice, and I am 25 years old
 ```
 
 [Вернуться к началу статьи](#typescript)
@@ -110,7 +124,9 @@
 ---
 
 ## Typing in TypeScript
+
 В TypeScript используются следующие типы данных и для разных целей:
+
 - `Boolean` - тип данных, который может иметь два значения true и false. Он используется для логических выражений, например, для проверки условий.
 - `Number` - тип данных, который представляет числа, как целые, так и дробные. Он используется для математических вычислений и других операций, где требуется числовой тип.
 - `String` - тип данных, который используется для представления символьных строк. Он используется для хранения текстовых данных, например, для подписей или описаний.
@@ -130,7 +146,9 @@
 ---
 
 ## Access Modifiers
+
 В TypeScript актуальны четыре модификатора свойств классов:
+
 1. `public` - свойства и методы с модификатором `public` доступны из любой части приложения. По умолчанию все свойства и методы являются `public`, если явно не указан другой модификатор.
 2. `private` - свойства и методы с модификатором `private` недоступны извне класса. Они могут быть использованы только внутри самого класса. Даже напрямую обратиться к приватному свойству или методу невозможно.
 3. `protected` - свойства и методы с модификатором `protected` доступны из самого класса и из его наследников.
@@ -141,28 +159,35 @@
 ---
 
 ## Type Assertions
+
 > Type Assertions в TypeScript - это механизм, который позволяет программисту явно указать тип данных, которым должна обладать переменная или выражение.
 
 1. Первый — синтаксис с использованием угловых скобок (<>):
+
 ```typescript
-    const header = <HTMLElement>document.getElementById("header");
+const header = <HTMLElement>document.getElementById('header')
 ```
+
 2. Вторая форма заключается в применении оператора `as`, после которого указывается тип, к которому надо выполнить преобразование.
+
 ```typescript
-    const header = document.getElementById("header") as HTMLElement;
+const header = document.getElementById('header') as HTMLElement
 ```
 
 ### ВАЖНО!!!
+
 > Чтобы избежать ошибок, связанных с использованием Type Assertions, следует стараться избегать их использования. Лучше явно объявлять тип данных переменной или выражения, когда это возможно, и использовать возможности TypeScript для определения типа данных переменных на этапе компиляции. Если же все-таки необходимо использовать Type Assertions, следует удостовериться в правильности их применения и правильности указания типа данных.
 
 ### ВАЖНО!!! ПОСТФИКС `!`
+
 > Постфикс `!` в TypeScript используется для указания компилятору TypeScript, что переменная имеет значение, когда это не является очевидным.
 > Например, если мы определим переменную `name: string | undefined`, компилятор TypeScript будет требовать от нас проверки, что name не является `undefined` перед использованием этой переменной. В таком случае мы можем использовать постфикс `!`, чтобы показать, что мы уверены, что переменная имеет значение:
+
 ```typescript
-    if (name !== undefined) {
-      console.log(name.toLocaleLowerCase());
-    }
-    console.log(name!.toLocaleLowerCase());
+if (name !== undefined) {
+	console.log(name.toLocaleLowerCase())
+}
+console.log(name!.toLocaleLowerCase())
 ```
 
 [Вернуться к началу статьи](#typescript)
@@ -170,6 +195,7 @@
 ---
 
 ## Interface in TypeScript
+
 > Интерфейсы TypeScript - это механизм, который позволяет определять контракты, которые должны быть реализованы классами или объектами. Они используются для описания формы объекта или класса и указания наличия конкретных методов или свойств. Интерфейсы предоставляют основу для реализации полиморфизма в TypeScript, который позволяет программисту работать с разными классами, реализующими одинаковые интерфейсы, используя единый API.
 
 > В TypeScript `?` после имени свойства интерфейса, аргумента функции или переменной означает, что это значение не обязательно и может быть `undefined`.
@@ -181,22 +207,24 @@
 - `x: number | undefined` означает, что параметр `x` может иметь значение типа `number` или может быть равен `undefined`.
 
 > В TypeScript интерфейсы могут наследоваться друг от друга с помощью ключевого слова extends. Это позволяет создавать иерархию интерфейсов и наследовать свойства и методы от родительских интерфейсов.
+
 ```typescript
-    interface Animal {
-      name: string;
-      eat(food: string): void;
-    }
-    
-    interface Dog extends Animal {
-      breed: string;
-      bark(): void;
-    }
-    
-    interface Cat extends Animal {
-      breed: string;
-      meow(): void;
-    }
+interface Animal {
+	name: string
+	eat(food: string): void
+}
+
+interface Dog extends Animal {
+	breed: string
+	bark(): void
+}
+
+interface Cat extends Animal {
+	breed: string
+	meow(): void
+}
 ```
+
 > Когда интерфейс наследует от класса, он также получает все свойства и методы класса, но это может наложить некоторые ограничения.
 
 > Например, если класс определяет свойства как `private` или `protected`, то эти свойства недоступны для интерфейса, который от него наследуется. Кроме того, если класс содержит реализацию методов, то интерфейс не может наследовать от таких методов.
@@ -204,81 +232,89 @@
 > Поэтому в большинстве случаев наследование интерфейсов не должно происходить от классов с реализацией. Чтобы избежать этой проблемы, рекомендуется использовать абстрактные классы вместо обычных классов с реализацией. Абстрактные классы могут содержать общие методы и свойства, а также определять абстрактные методы без их реализации, которые могут быть реализованы в дочерних классах. В этом случае наследование интерфейсов от абстрактных классов не вызовет таких проблем.
 
 ### ВАЖНО!!!
+
 > В TypeScript класс может одновременно реализовывать набор интерфейсов и наследоваться от другого класса с помощью ключевых слов `implements` и `extends`.
 
 - С помощью `implements` классы могут реализовывать набор интерфейсов, перечисленных через запятую. Интерфейсы описывают требования к структуре и поведению класса, что упрощает проверку типов данных и возможное переиспользование кода.
+
 ```typescript
-    interface Animal {
-      name: string;
-      eat(food: string): void;
-    }
-    
-    interface CanFly {
-      fly(speed: number): void;
-    }
-    
-    class Bird implements Animal, CanFly{
-      constructor(public name: string) {}
-    
-      eat(food: string) {
-        console.log(`${this.name} is eating ${food}.`);
-      }
-      
-      fly(speed: number) {
-        console.log(`${this.name} is flying at ${speed} km/h.`);
-      }
-    }
-    
-    const sparrow = new Bird("Sparrow");
-    sparrow.eat("seeds");
-    sparrow.fly(20); // Sparrow is flying at 20 km/h.
+interface Animal {
+	name: string
+	eat(food: string): void
+}
+
+interface CanFly {
+	fly(speed: number): void
+}
+
+class Bird implements Animal, CanFly {
+	constructor(public name: string) {}
+
+	eat(food: string) {
+		console.log(`${this.name} is eating ${food}.`)
+	}
+
+	fly(speed: number) {
+		console.log(`${this.name} is flying at ${speed} km/h.`)
+	}
+}
+
+const sparrow = new Bird('Sparrow')
+sparrow.eat('seeds')
+sparrow.fly(20) // Sparrow is flying at 20 km/h.
 ```
+
 - С помощью `extends` классы могут наследоваться от других классов и расширять свои свойства и методы.
+
 ```typescript
-    interface Animal {
-      name: string;
-      eat(food: string): void;
-    }
-    
-    class Cat implements Animal {
-      constructor(public name: string) {}
-    
-      eat(food: string) {
-        console.log(`${this.name} is eating ${food}.`);
-      }
-    }
-    
-    class Tiger extends Cat {
-      constructor(public name: string) {
-        super(name);
-      }
-      
-      hunt(target: string) {
-        console.log(`${this.name} is hunting ${target}.`);
-      }
-    }
-    
-    const tiger = new Tiger("Tiger");
-    tiger.eat("meat");
-    tiger.hunt("deer"); // Tiger is hunting deer.
+interface Animal {
+	name: string
+	eat(food: string): void
+}
+
+class Cat implements Animal {
+	constructor(public name: string) {}
+
+	eat(food: string) {
+		console.log(`${this.name} is eating ${food}.`)
+	}
+}
+
+class Tiger extends Cat {
+	constructor(public name: string) {
+		super(name)
+	}
+
+	hunt(target: string) {
+		console.log(`${this.name} is hunting ${target}.`)
+	}
+}
+
+const tiger = new Tiger('Tiger')
+tiger.eat('meat')
+tiger.hunt('deer') // Tiger is hunting deer.
 ```
+
 > - Обычный класс в TypeScript используется для создания объектов с определенными свойствами и методами, в то время как абстрактный класс может содержать методы без абстрактной реализации, которые наследуются дочерними классами. Абстрактный класс похож на обычный класс, но не может быть использован напрямую для создания объектов, только для наследования.
 > - Интерфейсы в TypeScript определяют абстрактные типы данных. Они описывают набор методов и свойств, которые должны быть реализованы классом или объектом, но не определяют их реализацию. Интерфейсы могут быть реализованы несколькими классами или объектами без явного наследования.
 > - **Основное отличие** между абстрактными классами и интерфейсами состоит в том, что абстрактный класс поддерживает реализацию методов, в то время как интерфейс не поддерживает. Обычный класс может наследовать только один класс, в то время как он может реализовывать несколько интерфейсов.
 
 ### ВАЖНО!!!
+
 > Можно объявить тип метода интерфейса так, чтобы он возвращал контекст вызова своего метода в TypeScript, используя тип `this` для указания типа, который представляет экземпляр объекта, на котором был вызван метод.
+
 ```typescript
-    interface ISomething {
-      getThis(): this;
-    }
-    
-    class Something implements ISomething {
-      public getThis() {
-        return this;
-      }
-    }
+interface ISomething {
+	getThis(): this
+}
+
+class Something implements ISomething {
+	public getThis() {
+		return this
+	}
+}
 ```
+
 > Таким образом, метод `getThis` возвращает тип `this`, который представляет экземпляр объекта, на котором был вызван метод. Класс `Something` реализует этот интерфейс, и метод `getThis` возвращает объект класса `Something`.
 
 [Вернуться к началу статьи](#typescript)
@@ -286,28 +322,29 @@
 ---
 
 ## Type Aliases in TypeScript
+
 > Type Aliases в TypeScript - это механизм, который позволяет задать собственное имя для любого типа данных, в том числе для других пользовательских типов данных, таких как типы интерфейсов, классов, примитивные типы данных и прочее. Они используются для создания более читаемого, лаконичного и понятного кода при работе с сложными типами данных.
 > В отличие от интерфейсов, Type Aliases могут быть использованы не только для определения формы объектов, но и для определения более сложных типов данных, таких как объединение нескольких типов данных, наложение наследования, а также для определения типов переменных и параметров функций.
 
 ```typescript
-    type Point = {
-      x: number;
-      y: number;
-    };
-    
-    type ThreeDimensionalPoint = Point & {
-      z: number;
-    };
-    
-    type Color = 'red' | 'green' | 'blue';
-    
-    type User = {
-      name: string;
-      age: number;
-      email: string;
-    };
-    
-    type Nullable<T> = T | null;
+type Point = {
+	x: number
+	y: number
+}
+
+type ThreeDimensionalPoint = Point & {
+	z: number
+}
+
+type Color = 'red' | 'green' | 'blue'
+
+type User = {
+	name: string
+	age: number
+	email: string
+}
+
+type Nullable<T> = T | null
 ```
 
 [Вернуться к началу статьи](#typescript)
@@ -315,28 +352,31 @@
 ---
 
 ## Hybrid Types
+
 > Hybrid Types (смешанные типы) в TypeScript - это типы, которые сочетают в себе два или более типа данных, таких как объекты, функции, классы или интерфейсы, в одном объявлении. Они позволяют моделировать объекты, которые имеют разные свойства или методы в разных контекстах.
 
 > Hybrid Types могут быть использованы для создания объектов с разными свойствами и методами в зависимости от контекста. Например, такой объект может иметь методы, которые используются только в одном контексте, и свойства, которые используются только в другом контексте.
+
 ```typescript
-    interface Counter {
-        (start: number): string;
-        increment(): void;
-        reset(): void;
-    }
-     
-    function getCounter(): Counter {
-        let counter = function (start: number) {} as Counter;
-        counter.increment = function () {};
-        counter.reset = function () {};
-        return counter;
-    }
-     
-    let c = getCounter();
-    c(10);
-    c.increment();
-    c.reset();
+interface Counter {
+	(start: number): string
+	increment(): void
+	reset(): void
+}
+
+function getCounter(): Counter {
+	let counter = function (start: number) {} as Counter
+	counter.increment = function () {}
+	counter.reset = function () {}
+	return counter
+}
+
+let c = getCounter()
+c(10)
+c.increment()
+c.reset()
 ```
+
 > В этом примере, объект Counter представляет собой функцию, которая может принимать число в качестве аргумента и возвращать строку, а также имеет методы increment и reset, которые не принимают аргументов и не возвращают значения.
 
 [Вернуться к началу статьи](#typescript)
@@ -344,72 +384,81 @@
 ---
 
 ## Index Types
+
 > Index Types (индексные типы) - это функциональность в TypeScript, которая позволяет создавать объекты, свойства которых могут быть определены и доступны по именам свойств во время выполнения.
 
 > Index Types позволяют создавать объекты с динамическими свойствами, которые могут определяться только во время выполнения программы.
+
 ```typescript
-// В этом примере, интерфейс Dictionary определяет объект, 
-// содержащий набор ключей и соответствующих значений любого типа T. 
+// В этом примере, интерфейс Dictionary определяет объект,
+// содержащий набор ключей и соответствующих значений любого типа T.
 // Ключи могут быть любой строкой, а значением может быть объект любого типа T
-    interface Dictionary<T> {
-        [key: string]: T;
-    }
+interface Dictionary<T> {
+	[key: string]: T
+}
 ```
+
 > Index Types могут быть использованы для создания обобщенных типов, которые могут работать с любыми объектами, содержащими свойства с заданными типами. Например, это может быть полезно для работы с объектами, возвращаемыми из API, которые имеют различные свойства в зависимости от запроса.
+
 ```typescript
-    type Employee = {
-      name: string;
-      age: number;
-      salary: number;
-    };
-    
-    type EmployeeInfo<T> = {
-      [P in keyof T]: T[P];
-    };
-    
-    const employee: Employee = {
-      name: "John Doe",
-      age: 45,
-      salary: 150000
-    };
-    
-    const employeeInfo: EmployeeInfo<Employee> = {
-      name: employee.name,
-      age: employee.age, 
-      salary: employee.salary  
-    };
+type Employee = {
+	name: string
+	age: number
+	salary: number
+}
+
+type EmployeeInfo<T> = {
+	[P in keyof T]: T[P]
+}
+
+const employee: Employee = {
+	name: 'John Doe',
+	age: 45,
+	salary: 150000,
+}
+
+const employeeInfo: EmployeeInfo<Employee> = {
+	name: employee.name,
+	age: employee.age,
+	salary: employee.salary,
+}
 ```
+
 > Оператор `keyof` в TypeScript используется для создания типа, который представляет собой объединение имен свойств объекта.
 
 > Оператор keyof позволяет получить тип, который содержит имена всех свойств объекта. Таким образом, мы можем использовать этот тип для создания других типов, которые зависят от имен свойств объекта.
-```typescript
-// Здесь мы определили интерфейс Person, который имеет три свойства: name, age и address. 
-// Затем мы определили тип PersonProps, который использует оператор keyof, чтобы получить тип, 
-// который содержит имена всех свойств объекта Person.
-    interface Person {
-        name: string;
-        age: number;
-        address: string;
-    }
-    
-    type PersonProps = keyof Person;
-    
-    // Тип PersonProps равен "name" | "age" | "address"
-    
-    const key: PersonProps = "name"; // Допустимое значение
-    const key2: PersonProps = "height"; // Ошибка типа
-```
-Мы можем использовать этот тип, например, для определения типа, который принимает имя свойства объекта в качестве параметра:
-```typescript
-    function getProperty<T, K extends keyof T>(obj: T, key: K) {
-        return obj[key];
-    }
 
-    const person: Person = { name: "John", age: 30, address: "123 Main Street" };
-    const name = getProperty(person, "name"); // тип name: string
-    const age = getProperty(person, "age"); // тип age: number
-    const height = getProperty(person, "height"); // Ошибка типа, свойство height не существует в объекте
+```typescript
+// Здесь мы определили интерфейс Person, который имеет три свойства: name, age и address.
+// Затем мы определили тип PersonProps, который использует оператор keyof, чтобы получить тип,
+// который содержит имена всех свойств объекта Person.
+interface Person {
+	name: string
+	age: number
+	address: string
+}
+
+type PersonProps = keyof Person
+
+// Тип PersonProps равен "name" | "age" | "address"
+
+const key: PersonProps = 'name' // Допустимое значение
+const key2: PersonProps = 'height' // Ошибка типа
 ```
+
+Мы можем использовать этот тип, например, для определения типа, который принимает имя свойства объекта в качестве параметра:
+
+```typescript
+function getProperty<T, K extends keyof T>(obj: T, key: K) {
+	return obj[key]
+}
+
+const person: Person = { name: 'John', age: 30, address: '123 Main Street' }
+const name = getProperty(person, 'name') // тип name: string
+const age = getProperty(person, 'age') // тип age: number
+const height = getProperty(person, 'height') // Ошибка типа, свойство height не существует в объекте
+```
+
 > Здесь мы определяем функцию `getProperty`, которая принимает два параметра: объект `T` и ключ `K`, который должен быть именем одного из свойств этого объекта. Тип `K` ограничен ключами `T`, целевыми типами свойств объекта `T`.
 
 > Затем мы вызываем функцию `getProperty` с объектом Person и именем свойства `name`. Вызов `getProperty` возвращает значение свойства name из объекта `Person` тип гарантированной безопасности.
@@ -419,31 +468,35 @@
 ---
 
 ## Mapped Types
+
 > Mapped Types (отображаемые типы) - это возможность TypeScript создавать новые типы данных на основе существующих типов данных.
 
 > Они позволяют создавать новый тип данных, который содержит только определенные свойства из существующих типов, изменять их модификаторы (readonly, optional), добавлять новые свойства и определять, как эти свойства должны быть изменены.
 
 > Ключевым словом для определения Mapped Types является `keyof`, которое извлекает ключи из указанного типа, затем используется оператор `in` для перебора этих ключей и создания нового типа.
+
 ```typescript
-    // Создание нового типа данных на основе существующих свойств
-    type PersonName = 'John' | 'Amy' | 'Bob';
-    type PersonMap = { [key in PersonName]: boolean };
+// Создание нового типа данных на основе существующих свойств
+type PersonName = 'John' | 'Amy' | 'Bob'
+type PersonMap = { [key in PersonName]: boolean }
 
-    // Добавление модификатора readonly к существующим свойствам
-    type ReadonlyProps<T> = {
-        readonly [P in keyof T]: T[P];
-    };
+// Добавление модификатора readonly к существующим свойствам
+type ReadonlyProps<T> = {
+	readonly [P in keyof T]: T[P]
+}
 
-    // Создание нового типа данных на основе существующего типа, заменяя определенные свойства на новые значения
-    type ReplaceProps<T, K extends keyof T, V> = {
-        [P in keyof T]: P extends K ? V : T[P];
-    };
+// Создание нового типа данных на основе существующего типа, заменяя определенные свойства на новые значения
+type ReplaceProps<T, K extends keyof T, V> = {
+	[P in keyof T]: P extends K ? V : T[P]
+}
 ```
+
 > Чтобы создать собственный Mapped Type, вы должны использовать ключевое слово MappedType и задать шаблон, который описывает, как вы хотите изменить тип данных.
+
 ```typescript
-    type MyMappedType<T> = {
-      [P in keyof T]?: T[P] | null;
-    }
+type MyMappedType<T> = {
+	[P in keyof T]?: T[P] | null
+}
 ```
 
 [Вернуться к началу статьи](#typescript)
@@ -451,135 +504,160 @@
 ---
 
 ## Generic types
+
 > Generics - это мощный инструмент в TypeScript, который позволяет создавать обобщенные (универсальные) типы данных. Обобщенные типы позволяют создавать функции, классы и интерфейсы, которые могут работать с различными типами данных, не зная тип заранее.
 
 > В TypeScript обобщенные типы обозначаются с помощью символов `<` и `>`.
+
 ```typescript
-    function getFirst<T>(arr: T[]): T | undefined {
-      return arr.length > 0 ? arr[0] : undefined;
-    }
-    
-    // Здесь <T> - это параметр типа, который говорит функции, 
-    // что мы будем передавать массив любого типа в качестве параметра, и передает его возвращаемому значению.
-    const arr1 = [1, 2, 3];
-    const arr2 = ['a', 'b', 'c'];
-    const num = getFirst(arr1); // typeof num === 'number'
-    const str = getFirst(arr2); // typeof str === 'string'
+function getFirst<T>(arr: T[]): T | undefined {
+	return arr.length > 0 ? arr[0] : undefined
+}
 
-    function identity<T>(value: T): T {
-        return value;
-    }
-    
-    identity<number>(1); // 1
-    identity<string>('1'); // "1"
+// Здесь <T> - это параметр типа, который говорит функции,
+// что мы будем передавать массив любого типа в качестве параметра, и передает его возвращаемому значению.
+const arr1 = [1, 2, 3]
+const arr2 = ['a', 'b', 'c']
+const num = getFirst(arr1) // typeof num === 'number'
+const str = getFirst(arr2) // typeof str === 'string'
 
-    function identityFree<T,U>(value: T, messsage: U): T {
-        console.log(message) 
-        return value;
-    }
-    
-    identityFree<number,string>(26, "hello"); // return 26
+function identity<T>(value: T): T {
+	return value
+}
+
+identity<number>(1) // 1
+identity<string>('1') // "1"
+
+function identityFree<T, U>(value: T, messsage: U): T {
+	console.log(message)
+	return value
+}
+
+identityFree<number, string>(26, 'hello') // return 26
 ```
+
 > TypeScript поставляется с несколькими встроенными универсальными типами (generic types), которые могут использоваться в различных контекстах.
-1. `Array<T>` : это универсальный тип для массивов. Он может быть использован для создания массива значений любого типа T.
-```typescript
-    const numbers: Array<number> = [1, 2, 3, 4];
-    const strings: Array<string> = ["hello", "world"];
-```
-2. `Promise<T>` : это универсальный тип обещаний, который представляет асинхронную операцию, которая должна выполниться в будущем и вернуть значение типа T.
-```typescript
-    const promise: Promise<string> = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve("Hello, world!");
-      }, 1000);
-    });
 
-    promise.then((result) => console.log(result)); // "Hello, world!"
+1. `Array<T>` : это универсальный тип для массивов. Он может быть использован для создания массива значений любого типа T.
+
+```typescript
+const numbers: Array<number> = [1, 2, 3, 4]
+const strings: Array<string> = ['hello', 'world']
 ```
+
+2. `Promise<T>` : это универсальный тип обещаний, который представляет асинхронную операцию, которая должна выполниться в будущем и вернуть значение типа T.
+
+```typescript
+const promise: Promise<string> = new Promise((resolve, reject) => {
+	setTimeout(() => {
+		resolve('Hello, world!')
+	}, 1000)
+})
+
+promise.then(result => console.log(result)) // "Hello, world!"
+```
+
 3. `ReadonlyArray<T>` : это универсальный тип для массивов с только для чтения свойствами. Он предоставляет те же самые методы, что и обычные массивы, но теперь методы изменения массива (например, push, pop) могут вызвать ошибку во время компиляции.
+
 ```typescript
-    const readonlyNumbers: ReadonlyArray<number> = [1, 2, 3, 4];
+const readonlyNumbers: ReadonlyArray<number> = [1, 2, 3, 4]
 ```
+
 4. `Partial<T>` : это универсальный тип, который делает все свойства типа T необязательными.
+
 ```typescript
-    interface Person {
-      name: string;
-      age: number;
-      location: string;
-    }
-    
-    type PartialPerson = Partial<Person>;
-    
-    const person: PartialPerson = { name: "John" };
+interface Person {
+	name: string
+	age: number
+	location: string
+}
+
+type PartialPerson = Partial<Person>
+
+const person: PartialPerson = { name: 'John' }
 ```
+
 5. `Record<K, T>`: это универсальный тип, который представляет словарь (ассоциативный массив), где ключевое значение имеет тип K, а значение элемента имеет тип T.
+
 ```typescript
-    type PhoneNumbers = Record<string, number>;
-    
-    const phoneNumbers: PhoneNumbers = {
-      John: 1234567890,
-      Jane: 2345678901,
-      Bob: 3456789012,
-    };
+type PhoneNumbers = Record<string, number>
+
+const phoneNumbers: PhoneNumbers = {
+	John: 1234567890,
+	Jane: 2345678901,
+	Bob: 3456789012,
+}
 ```
+
 - Ограничение возможных значений переменной типа:
+
 ```typescript
-    type Color = "red" | "blue" | "green";
-    let myColor: Color;
-    
-    myColor = "red"; // OK
-    myColor = "yellow"; // Ошибка компиляции
+type Color = 'red' | 'blue' | 'green'
+let myColor: Color
+
+myColor = 'red' // OK
+myColor = 'yellow' // Ошибка компиляции
 ```
+
 > В TypeScript можно ограничить возможные значения переменной типа значениями другой переменной типа, используя ключевое слово `extends`. Для этого нужно создать переменную типа и использовать ее имя в качестве условия для ограничения типа другой переменной.
 
 - Ограничить возможные значения типа переменной `B` значениями типа переменной `A`:
-```typescript
-    type A = "foo" | "bar" | "baz";
-    type B<T extends A> = T;
-    
-    const value1: B<"foo"> = "foo"; // OK
-    const value2: B<"qux"> = "qux"; // Ошибка компиляции
-```
-> В TypeScript можно указать значение по умолчанию для переменных типа. Это делается с помощью оператора `=` после объявления типа переменной.
-```typescript
-    type MyType<T = string> = {
-      prop: T;
-    }
-    
-    const a: MyType = { prop: "hello" }; // a имеет тип MyType<string>
-    const b: MyType<number> = { prop: 10 }; // b имеет тип MyType<number>
-    const c: MyType<boolean> = { prop: true }; // c имеет тип MyType<boolean>
-```
-> Если при вызове функции явно передан дженерик аргумент, то TypeScript использует этот аргумент в качестве типа для соответствующего места в функции.
-```typescript
-    function identity<T>(arg: T): T {
-      return arg;
-    }
-    
-    let myIdentity = identity<number>(42);
-```
-> Если дженерик аргумент не передан, но используется для типизации аргумента функции, то TypeScript попытается вывести тип дженерик аргумента на основе типа переданного аргумента.
-```typescript
-    function logLength<T>(arg: T[]): T[] {
-      console.log(arg.length);
-      return arg;
-    }
-    
-    let arr = logLength([1, 2, 3]);
-   // Так как [1, 2, 3] является массивом типа number[], TypeScript выводит, что T равно number, и поэтому тип возвращаемого значения также будет number[].
-```
-> Если дженерик аргумент не передан, но используется для типизации возвращаемого функцией значения, TypeScript попытается вывести тип дженерик аргумента на основе контекста вызова функции.
-```typescript
-    function identity<T>(arg: T): T {
-      return arg;
-    }
-    
-    let myIdentity: <T>(arg: T) => T = identity;
-    // Здесь мы определяем переменную myIdentity с типом функции, которую можно использовать для вызова identity. 
-    // Мы не явно указываем тип дженерик аргумента, поэтому TypeScript попытается вывести его тип.
 
-    // Так как тип переменной myIdentity ожидает, что функция принимает и возвращает один и тот же тип, TypeScript выводит, что тип T должен быть тривиально выведен как any. 
-    // Это означает, что функция identity будет иметь тип any => any, что может быть опасно в качестве типа функции.
+```typescript
+type A = 'foo' | 'bar' | 'baz'
+type B<T extends A> = T
+
+const value1: B<'foo'> = 'foo' // OK
+const value2: B<'qux'> = 'qux' // Ошибка компиляции
+```
+
+> В TypeScript можно указать значение по умолчанию для переменных типа. Это делается с помощью оператора `=` после объявления типа переменной.
+
+```typescript
+type MyType<T = string> = {
+	prop: T
+}
+
+const a: MyType = { prop: 'hello' } // a имеет тип MyType<string>
+const b: MyType<number> = { prop: 10 } // b имеет тип MyType<number>
+const c: MyType<boolean> = { prop: true } // c имеет тип MyType<boolean>
+```
+
+> Если при вызове функции явно передан дженерик аргумент, то TypeScript использует этот аргумент в качестве типа для соответствующего места в функции.
+
+```typescript
+function identity<T>(arg: T): T {
+	return arg
+}
+
+let myIdentity = identity<number>(42)
+```
+
+> Если дженерик аргумент не передан, но используется для типизации аргумента функции, то TypeScript попытается вывести тип дженерик аргумента на основе типа переданного аргумента.
+
+```typescript
+function logLength<T>(arg: T[]): T[] {
+	console.log(arg.length)
+	return arg
+}
+
+let arr = logLength([1, 2, 3])
+// Так как [1, 2, 3] является массивом типа number[], TypeScript выводит, что T равно number, и поэтому тип возвращаемого значения также будет number[].
+```
+
+> Если дженерик аргумент не передан, но используется для типизации возвращаемого функцией значения, TypeScript попытается вывести тип дженерик аргумента на основе контекста вызова функции.
+
+```typescript
+function identity<T>(arg: T): T {
+	return arg
+}
+
+let myIdentity: <T>(arg: T) => T = identity
+// Здесь мы определяем переменную myIdentity с типом функции, которую можно использовать для вызова identity.
+// Мы не явно указываем тип дженерик аргумента, поэтому TypeScript попытается вывести его тип.
+
+// Так как тип переменной myIdentity ожидает, что функция принимает и возвращает один и тот же тип, TypeScript выводит, что тип T должен быть тривиально выведен как any.
+// Это означает, что функция identity будет иметь тип any => any, что может быть опасно в качестве типа функции.
 ```
 
 [Вернуться к началу статьи](#typescript)
@@ -587,40 +665,48 @@
 ---
 
 ## Union and intersection type
+
 > Union и intersection типы - это возможности TypeScript для объединения типов и пересечения типов, соответственно.
 
 > Union тип объединяет два или более типа в единый тип. Это означает, что значение может иметь один из нескольких возможных типов. Оператором объединения в TypeScript является `|` (вертикальная черта) (или).
 
 Вот пример использования Union типа:
+
 ```typescript
-    let value: string | number;
-    value = "hello"; // OK
-    value = 42; // OK
-    value = true; // Ошибка компиляции
+let value: string | number
+value = 'hello' // OK
+value = 42 // OK
+value = true // Ошибка компиляции
 ```
+
 > Intersection тип позволяет создавать новые типы, которые являются объединением нескольких других типов. Это означает, что новый тип будет содержать все свойства и методы из каждого из исходных типов. Оператором пересечения в TypeScript является `&` (амперсанд) (и).
 
 Вот пример использования Intersection типа:
+
 ```typescript
-    interface Debuggable {
-        debug(): string;
-    }
-    
-    interface Loggable {
-        log(): void;
-    }
-    
-    function mixin<T extends Debuggable & Loggable>(obj: T): void {
-        console.log(obj.debug());
-        obj.log();
-    }
-    
-    let myObj = {
-        debug() { return "Debug data"; },
-        log() { console.log("Logging data"); }
-    };
-    
-    mixin(myObj);
+interface Debuggable {
+	debug(): string
+}
+
+interface Loggable {
+	log(): void
+}
+
+function mixin<T extends Debuggable & Loggable>(obj: T): void {
+	console.log(obj.debug())
+	obj.log()
+}
+
+let myObj = {
+	debug() {
+		return 'Debug data'
+	},
+	log() {
+		console.log('Logging data')
+	},
+}
+
+mixin(myObj)
 ```
 
 [Вернуться к началу статьи](#typescript)
@@ -628,118 +714,140 @@
 ---
 
 ## Type Guards
+
 > Type Guards - это механизм TypeScript, который позволяет проверять тип переменной и использовать эту информацию для определения выполнения определенных операций или методов.
 
 > Type Guards будут полезны, когда вы имеете дело со значениями, которые могут иметь различные типы в зависимости от контекста. Это может быть полезно, например, когда вы работаете со значениями, полученными из пользовательского ввода, или когда вы обрабатываете значения, которые могут быть одного из нескольких возможных типов.
 
 Type Guards могут использоваться для проверки различных типов, таких как классы, интерфейсы, перечисления и другие типы данных, и включают в себя следующие методы:
+
 1. `typeof` оператор
+
 ```typescript
-    if (typeof num === "number") {
-        console.log("num is a number");
-    }
+if (typeof num === 'number') {
+	console.log('num is a number')
+}
 ```
+
 2. `instanceof` оператор
+
 ```typescript
-    if (user instanceof AdminUser) {
-        console.log("user is an AdminUser");
-    }
+if (user instanceof AdminUser) {
+	console.log('user is an AdminUser')
+}
 ```
+
 3. Проверка наличия свойства
+
 ```typescript
-    if ("name" in obj) {
-        console.log("obj has a name property");
-    }
+if ('name' in obj) {
+	console.log('obj has a name property')
+}
 ```
+
 4. Проверка на значение `null` или `undefined`
+
 ```typescript
-    if (value !== null && value !== undefined) {
-        console.log("value is not null or undefined");
-    }
+if (value !== null && value !== undefined) {
+	console.log('value is not null or undefined')
+}
 ```
+
 5. Сравнение `==/===`. Операторы сравнения могут использоваться для проверки типов переменных. Например, чтобы проверить, является ли переменная числом:
+
 ```typescript
-    function isNumber(x: any): x is number {
-      return typeof x === "number";
-    }
-    
-    let value: any = 42;
-    
-    if (isNumber(value)) {
-      console.log("value is a number");
-    } else {
-      console.log("value is not a number");
-    }
+function isNumber(x: any): x is number {
+	return typeof x === 'number'
+}
+
+let value: any = 42
+
+if (isNumber(value)) {
+	console.log('value is a number')
+} else {
+	console.log('value is not a number')
+}
 ```
+
 6. Отрицание `!`. Если переменная типа `T | null | undefined`, мы можем использовать оператор отрицания, чтобы исключить значения `null` и `undefined`:
+
 ```typescript
-    function doSomething(x: string | null | undefined) {
-      if (!x) {
-        console.log("x is null or undefined");
-      } else {
-        console.log("x is a string");
-      }
-    }
+function doSomething(x: string | null | undefined) {
+	if (!x) {
+		console.log('x is null or undefined')
+	} else {
+		console.log('x is a string')
+	}
+}
 ```
+
 7. Двойное отрицание `!!`:
+
 ```typescript
-    function isDefined<T>(x: T | null | undefined): x is T {
-      return !!x;
-    }
-    
-    let value: string | null = null;
-    
-    if (isDefined(value)) {
-      console.log("value is a string");
-    } else {
-      console.log("value is null or undefined");
-    }
-    // Функция isDefined использует двойное отрицание (!!) для преобразования переменной x в булевое значение. 
-    // Если переменная имеет значение null или undefined, то двойное отрицание вернет false. 
-    // В противном случае, переменная будет рассматриваться как истинное (true) значение.
+function isDefined<T>(x: T | null | undefined): x is T {
+	return !!x
+}
+
+let value: string | null = null
+
+if (isDefined(value)) {
+	console.log('value is a string')
+} else {
+	console.log('value is null or undefined')
+}
+// Функция isDefined использует двойное отрицание (!!) для преобразования переменной x в булевое значение.
+// Если переменная имеет значение null или undefined, то двойное отрицание вернет false.
+// В противном случае, переменная будет рассматриваться как истинное (true) значение.
 ```
 
 ### ВАЖНО!!!
+
 > При наследовании от Error и создании собственных ошибок, instanceof может вернуть некорректный результат во время проверки экземпляров нашей собственной ошибки. Это происходит из-за того, что ошибка, созданная пользователем, наследует свойства и методы объекта Error, но не является экземпляром самого Error.
 
 > В результате, если мы проверяем, является ли наш экземпляр ошибки объектом Error, instanceof может вернуть false. Это может быть нарушением ожидаемого поведения, если мы полагаемся на instanceof для правильного определения типа ошибки в нашем коде.
 
 > Чтобы решить эту проблему и гарантировать правильную проверку нашей собственной ошибки, мы можем использовать следующий шаблон для наследования собственных ошибок от Error:
+
 ```typescript
-    class MyError extends Error {
-      constructor(message?: string) {
-        super(message);
-        Object.setPrototypeOf(this, MyError.prototype);
-      }
-    }
-    
-    let err = new MyError();
-    console.log(err instanceof Error); //вернет true
-    console.log(err instanceof MyError); //вернет true
+class MyError extends Error {
+	constructor(message?: string) {
+		super(message)
+		Object.setPrototypeOf(this, MyError.prototype)
+	}
+}
+
+let err = new MyError()
+console.log(err instanceof Error) //вернет true
+console.log(err instanceof MyError) //вернет true
 ```
+
 Вместо того, чтобы использовать this.prototype = new Error(), мы можем использовать Object.setPrototypeOf(this, MyError.prototype). Это обновляет прототип для this, чтобы он ссылался на прототип MyError вместо Error.
 
 Таким образом, мы можем гарантировать, что наши собственные ошибки будут экземплярами Error и можно использовать instanceof для проверки наличия ошибок верно.
 
 ### ВАЖНО!!!
+
 > Можно объявить свой Type Guard, чтобы использовать его для проверки типов переменных. Типически, Type Guard используется вместе с оператором `if` для определения, соответствует ли значение определенному типу.
+
 ```typescript
-    function isNumber(value: any): value is number {
-        return typeof value === "number";
-    }
+function isNumber(value: any): value is number {
+	return typeof value === 'number'
+}
 ```
+
 > В этом примере мы создали функцию isNumber. Эта функция принимает параметр value, проверяет, является ли его тип числом (typeof value === "number") и возвращает true, если это так.
 
 > Но что это за выражение value is number? Оно сообщает TypeScript, что тип value на самом деле является number, и если функция isNumber возвращает true, то TypeScript будет считать, что value имеет тип number.
+
 ```typescript
-    // Теперь мы можем использовать наш Type Guard для проверки типа значения:
-    let value: any = 42;
-    
-    if (isNumber(value)) {
-        console.log("value is a number");
-    } else {
-        console.log("value is not a number");
-    }
+// Теперь мы можем использовать наш Type Guard для проверки типа значения:
+let value: any = 42
+
+if (isNumber(value)) {
+	console.log('value is a number')
+} else {
+	console.log('value is not a number')
+}
 ```
 
 [Вернуться к началу статьи](#typescript)
@@ -747,30 +855,34 @@ Type Guards могут использоваться для проверки ра
 ---
 
 ## Assertion Functions
+
 > Assertion Functions - это функции, которые используются для явного утверждения в коде TypeScript об информации, которая не может быть выведена компилятором TypeScript.
 
 > Assertion Functions объявляются как функции, которые возвращают тип `asserts x is T`, где `x` - это аргумент функции, а `T` - это тип, который мы утверждаем, что `x` имеет.
+
 ```typescript
-    function findElement<T>(arr: T[], func: (el: T) => boolean) {
-        for (const el of arr) {
-            if (func(el)) {
-                return el;
-            }
-        }
-    }
+function findElement<T>(arr: T[], func: (el: T) => boolean) {
+	for (const el of arr) {
+		if (func(el)) {
+			return el
+		}
+	}
+}
 ```
+
 > Компилятор TypeScript не может определить тип элемента массива, который мы находим с помощью функции `func`. Но мы можем использовать Assertion Function, чтобы уточнить тип:
+
 ```typescript
-    function findElement<T, U extends T>(arr: T[], func: (el: T) => el is U): U {
-        for (const el of arr) {
-            if (func(el)) {
-                return el;
-            }
-        }
-        throw new Error("element not found");
-    }
-    // В этом примере мы добавили Assertion Function, которая уточняет тип элемента массива до U. 
-    // Функция findElement теперь принимает функцию func, которая возвращает true, если элемент массива является типом U.
+function findElement<T, U extends T>(arr: T[], func: (el: T) => el is U): U {
+	for (const el of arr) {
+		if (func(el)) {
+			return el
+		}
+	}
+	throw new Error('element not found')
+}
+// В этом примере мы добавили Assertion Function, которая уточняет тип элемента массива до U.
+// Функция findElement теперь принимает функцию func, которая возвращает true, если элемент массива является типом U.
 ```
 
 [Вернуться к началу статьи](#typescript)
@@ -778,35 +890,423 @@ Type Guards могут использоваться для проверки ра
 ---
 
 ## Decorators in TypeScript
+
 > Декораторы - это экспериментальный языковой элемент(функция), добавленный в ECMAScript 2016 и поддерживаемый в TypeScript, который позволяет добавлять метаданные к классам и их членам (методам, свойствам, параметрам и т.д.).
+
 ```typescript
-    @decorator
-    class MyClass {
-      @decorator
-      myMethod() {
-      }
-    }
+@decorator
+class MyClass {
+	@decorator
+	myMethod() {}
+}
 ```
 
 > Чтобы применить декоратор ко всем экземплярам класса, нужно использовать декоратор для прототипа класса:
+
 ```typescript
-    function myClassDecorator<T extends {new(...args:any[]):{}}>(constructor:T) {
-      return class extends constructor {
-          newProperty = "new property";
-          hello = "override";
-      }
-    }
-    
-    @myClassDecorator
-    class MyClass {
-      hello: string;
-      constructor(m: string) {
-          this.hello = m;
-      }
-    }
-    
-    console.log(new MyClass("world").newProperty); // "new property"
+function myClassDecorator<T extends { new (...args: any[]): {} }>(
+	constructor: T
+) {
+	return class extends constructor {
+		newProperty = 'new property'
+		hello = 'override'
+	}
+}
+
+@myClassDecorator
+class MyClass {
+	hello: string
+	constructor(m: string) {
+		this.hello = m
+	}
+}
+
+console.log(new MyClass('world').newProperty) // "new property"
 ```
+
+[Вернуться к началу статьи](#typescript)
+
+---
+
+## Function overload
+
+> Перегрузка функции в TypeScript - это возможность определить несколько сигнатур одной функции с разными типами параметров или разным числом параметров. TypeScript использует перегрузку функций для обеспечения статической типизации и контроля типов в процессе компиляции.
+
+- Путем определения нескольких сигнатур и соответствующей реализации:
+
+```typescript
+function concatenate(x: string, y: string): string
+function concatenate(x: number, y: number): number
+function concatenate(x: any, y: any): any {
+	return x + y
+}
+```
+
+- С использованием типов-объединений:
+
+```typescript
+function displayType(arg: string | number) {
+	if (typeof arg === 'string') {
+		console.log('Это строка: ' + arg)
+	} else if (typeof arg === 'number') {
+		console.log('Это число: ' + arg)
+	}
+}
+```
+
+- С использованием интерфейсов:
+
+```typescript
+interface Car {
+	make: string
+	model: string
+}
+
+interface Bike {
+	brand: string
+	type: string
+}
+
+function displayVehicle(vehicle: Car | Bike) {
+	if ('make' in vehicle) {
+		console.log(`Это машина ${vehicle.make} ${vehicle.model}`)
+	} else {
+		console.log(`Это велосипед ${vehicle.brand} типа ${vehicle.type}`)
+	}
+}
+```
+
+[Вернуться к началу статьи](#typescript)
+
+---
+
+## Typing class constructor
+
+> Для типизации конструктора класса в TypeScript вы можете воспользоваться типом класса. Тип класса представляет собой тип, описывающий структуру экземпляров класса, включая конструктор класса и его методы.
+
+```typescript
+class Person {
+	name: string
+
+	constructor(name: string) {
+		this.name = name
+	}
+}
+
+let person: Person = new Person('Alice')
+console.log(person.name) // Выведет "Alice"
+```
+
+> Относительно типизации перегрузки конструктора для класса, в TypeScript нельзя явно определить перегрузку конструктора как для обычных функций. Однако, определение различных вариантов конструктора можно сделать, используя параметры по умолчанию или опциональные параметры.
+
+```typescript
+class Car {
+	make: string
+	model: string
+
+	constructor(make: string, model?: string) {
+		this.make = make
+		this.model = model || 'Unknown'
+	}
+}
+
+let car1: Car = new Car('Toyota')
+let car2: Car = new Car('Ford', 'Focus')
+
+console.log(car1.make, car1.model) // Выведет "Toyota Unknown"
+console.log(car2.make, car2.model) // Выведет "Ford Focus"
+```
+
+[Вернуться к началу статьи](#typescript)
+
+---
+
+## Const assertion
+
+> Const assertion (утверждение const) — это специальная функциональность в TypeScript, которая позволяет явно указать компилятору, что переменная должна быть рассмотрена как неизменяемая (const) при выводе типа, независимо от того, какое значение у неё есть в данный момент.
+
+- Пример использования const assertion:
+
+```typescript
+let x = 'hello' as const
+// x теперь имеет тип "hello", а не string
+```
+
+> Const assertion полезно в ситуациях, когда вы уверены, что значение переменной не должно изменяться, и хотите, чтобы TypeScript обеспечил эту неизменяемость.
+
+Однако у const assertion есть свои ограничения:
+
+1. Когда применяется к объекту или массиву, const assertion "замораживает" только первый уровень свойств, но не глубоко.
+
+```typescript
+const obj = { a: 1, b: { c: 2 } } as const
+obj.a = 5 // Ошибка: Не удается присвоить новое значение
+obj.b.c = 10 // Работает, так как глубокие свойства не являются неизменяемыми
+```
+
+2. Не работает с переменными, которые уже имеют тип, несовместимый с const.
+
+```typescript
+let y: string = 'world'
+let z = y as const // Ошибка: Нельзя использовать const assertion с переменными других типов
+```
+
+[Вернуться к началу статьи](#typescript)
+
+---
+
+## Assigning types
+
+1. `Partial<T>` - Создает тип, состоящий из всех опциональных свойств из типа T.
+
+```typescript
+interface User {
+	name: string
+	age?: number
+}
+
+const partialUser: Partial<User> = { name: 'Alice' }
+```
+
+2. `Readonly<T>` - Создает тип, в котором все свойства только для чтения.
+
+```typescript
+interface Point {
+	x: number
+	y: number
+}
+
+const readOnlyPoint: Readonly<Point> = { x: 1, y: 2 }
+readOnlyPoint.x = 5 // Ошибка: Нельзя изменять свойства только для чтения
+```
+
+3. `Required<T>` - Создает тип, в котором все свойства становятся обязательными.
+
+```typescript
+interface Props {
+	name?: string
+	age?: number
+}
+
+const requiredProps: Required<Props> = { name: 'Bob', age: 30 }
+```
+
+4. `Record<T, U>` - Создает тип, представляющий объект, в котором ключи имеют тип T, а значения имеют тип U.
+
+```typescript
+const users: Record<string, { age: number }> = {
+	Alice: { age: 25 },
+	Bob: { age: 30 },
+}
+```
+
+5. `Pick<T,U>` - Создает тип, содержащий только выбранные свойства из типа T.
+
+```typescript
+interface User {
+	name: string
+	age: number
+	city: string
+}
+
+const userSubset: Pick<User, 'name' | 'city'> = {
+	name: 'Alice',
+	city: 'New York',
+}
+```
+
+6. `Omit<T,K>` - Создает тип, исключая выбранные свойства из типа T.
+
+```typescript
+interface User {
+	name: string
+	age: number
+	city: string
+}
+
+const userWithoutAge: Omit<User, 'age'> = {
+	name: 'Alice',
+	city: 'New York',
+}
+```
+
+7. `Exclude<T, U>` - Создает тип, который исключает из типа T все элементы, которые также присутствуют в типе U. .
+
+```typescript
+type Colors = 'red' | 'blue' | 'green' | 'yellow'
+type PrimaryColors = Exclude<Colors, 'green' | 'yellow'>
+```
+
+8. `Extract<T, U>` - Создает тип, который выбирает из типа T только элементы, которые также присутствуют в типе U.
+
+```typescript
+type Colors = 'red' | 'blue' | 'green' | 'yellow'
+type PrimaryColors = Extract<Colors, 'red' | 'blue'>
+```
+
+9. `NonNullable<T>` - Создает тип, который исключает из типа T значение null и undefined.
+
+```typescript
+type NonNullString = NonNullable<string | null | undefined> // будет только string
+```
+
+10. `ReturnType<T>` - Получает тип возвращаемого значения из функции.
+
+```typescript
+function greet(): string {
+	return 'Hello!'
+}
+
+type Greeting = ReturnType<typeof greet> // будет string
+```
+
+11. `Parameters<T>` - Получает тип параметров функции.
+
+```typescript
+function sum(a: number, b: number): number {
+	return a + b
+}
+
+type SumParams = Parameters<typeof sum> // будет [number, number]
+```
+
+12. `InstanceType<T>` - Получает тип экземпляра конструктора класса.
+
+```typescript
+class Car {
+	brand: string
+	constructor(brand: string) {
+		this.brand = brand
+	}
+}
+
+type CarInstance = InstanceType<typeof Car> // будет Car
+```
+
+13. `ThisType<T>` - Это контекстный тип, который позволяет указать тип для `this` внутри объекта или функции.
+
+```typescript
+interface User {
+	name: string
+	sayHello(this: User): void
+}
+
+const user: User = {
+	name: 'Alice',
+	sayHello() {
+		console.log(`Hello, ${this.name}!`)
+	},
+}
+```
+
+[Вернуться к началу статьи](#typescript)
+
+---
+
+## Conditional Types
+
+> Conditional Types (условные типы) в TypeScript предназначены для создания типов, которые зависят от условий. Они позволяют определять типы на основе проверки какого-либо условия.
+
+> С Conditional Types вы можете создавать типы, которые изменяются в зависимости от проверки типа входных параметров или других типов. Это полезно при условной проверке типов во время компиляции кода.
+
+```typescript
+type CheckUser<T> = T extends string ? 'Is a string' : 'Not a string'
+
+type StringType = CheckUser<string> // "Is a string"
+type NumberType = CheckUser<number> // "Not a string"
+```
+
+### Проявление дистрибутивности Conditional Types.
+
+> В TypeScript дистрибутивность в Conditional Types проявляется в том, что когда Conditional Type определен через обобщенный тип (generic type), он автоматически применяется к каждому элементу типа, который является объединением (union) или пересечением (intersection).
+> Для понимания концепции дистрибутивности в Conditional Types давайте рассмотрим пример:
+
+```typescript
+type MyType<T> = T extends any ? T[] : never
+
+type StringArray = MyType<string> // string[]
+type NumberArray = MyType<number> // number[]
+type StringOrNumberArray = MyType<string | number> // (string | number)[]
+type StringAndNumberArray = MyType<string & number> // never
+```
+
+- StringArray будет `string[]`, так как `MyType<string>` будет интерпретирован как массив строк.
+- NumberArray будет `number[]`, так как `MyType<number>` будет интерпретирован как массив чисел.
+- StringOrNumberArray будет `(string | number)[]`, так как `MyType<string | number>` будет интерпретирован как массив строк и чисел.
+- StringAndNumberArray будет never, так как `MyType<string & number>` не имеет смысла и возвращает never.
+
+> Таким образом, дистрибутивность в Conditional Types позволяет автоматически распространять условные типы на каждый элемент объединения или пересечения типов. Это делает их более мощными и удобными в использовании.
+
+### Удаление составного типа из union type с помощью Conditional Types.
+
+> Для удаления определенного типа из объединения типов можно использовать Conditional Types в TypeScript. Давайте рассмотрим пример, где мы удалим строковый тип из объединения типов с помощью Conditional Types:
+
+```typescript
+type ExcludeString<T> = T extends string ? never : T
+
+type OriginalUnion = string | number | boolean
+
+type NewUnion = ExcludeString<OriginalUnion> // number | boolean
+```
+
+> В этом примере мы создали тип `ExcludeString<T>`, который проверяет, является ли тип T строковым. Если T является строкой, то он возвращает never, иначе возвращает сам T.
+
+> Затем мы определили начальное объединение типов `OriginalUnion`, которое содержит string, number и boolean.
+
+> С помощью `ExcludeString<OriginalUnion>` мы создали новое объединение типов NewUnion, из которого исключен тип string. Таким образом, NewUnion будет равен number | boolean, и тип string будет удален из объединения типов.
+
+> Это простой способ удаления определенного типа из объединения типов с использованием Conditional Types в TypeScript.
+
+### Использование Conditional Types совместно с Mapped Types.
+
+> B TypeScript вы можете использовать Conditional Types в сочетании с Mapped Types для более сложных и мощных операций с типами. Путем объединения Conditional Types и Mapped Types вы можете создавать более гибкие и сложные типы.
+
+```typescript
+type KeysOfType<T, U> = {
+	[K in keyof T]: T[K] extends U ? K : never
+}
+
+interface Person {
+	name: string
+	age: number
+	city: string
+}
+
+type StringKeysOfPerson = KeysOfType<Person, string>
+
+// StringKeysOfPerson: {
+//   name: "name";
+//   city: "city";
+// }
+```
+
+> В этом примере мы определили тип KeysOfType<T, U>, который отображает свойства объекта типа T, которые имеют значение типа U.
+
+> Затем мы создаем интерфейс Person, имеющий свойства name, age и city.
+
+> С помощью `KeysOfType<Person, string>` мы создаем новый тип StringKeysOfPerson, который содержит только те свойства объекта Person, значения которых являются строками. В результате получаем { name: "name", city: "city" }.
+
+> Таким образом, использование Conditional Types совместно с Mapped Types в TypeScript может быть очень полезным для создания сложных манипуляций с типами.
+
+### Для чего нужен infer? Допускается ли использовать infer для типов не являющихся Conditional Types?
+
+> Ключевое слово `infer`в TypeScript используется в Conditional Types для вывода типов из других типов. Оно позволяет присваивать типы из одной части типа другой части типа.
+
+> `infer` удобно использовать, когда вы хотите извлечь и сохранить тип из другого типа на определенном месте в общей структуре типа.
+
+```typescript
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never
+
+function foo(): number {
+	return 1
+}
+
+type FooReturnType = ReturnType<typeof foo> // FooReturnType будет типом `number`
+```
+
+> Однако вне Conditional Types, infer не используется и не имеет смысла. Оно предназначено специально для вывода типов в условных типах и не применяется в других контекстах.
+
+> Таким образом, использование infer вне Conditional Types не допускается в TypeScript. Однако внутри Conditional Types оно может быть очень полезным для работы с типами
 
 [Вернуться к началу статьи](#typescript)
 
