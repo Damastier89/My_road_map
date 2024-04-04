@@ -5,9 +5,16 @@
 - [Навигация по DOM-элементам](#navigation-through-dom-elements)
 - [CSS стили в DOM](#css-in-dom)
 - [DocumentFragment](#documentfragment)
+- [Работа с системой координат](#browser-coordinate-system)
+- [Event bubbling и Event capturing](#event-bubbling-and-event-capturing)
+- [Делегирование событий в DOM](#delegating-events-to-the-dom)
+- [Методы getElementsBy\* и querySelector](#methods-getelementsby-and-queryselector)
+- [Методы innerHTML, outerHTML, innerText](#methods-innerhtml-and-outerhtml)
 
 ## DOM, BOM, window
+
 ### DOM, BOM и window.
+
 > `DOM (Document Object Model)` - это структурированное представление HTML документа, которое дает программистам возможность изменять содержимое страницы в реальном времени, динамически обновлять содержимое страницы и реагировать на действия пользователя на странице.
 
 > `BOM (Browser Object Model)` - это объектная модель браузера, которая описывает объекты браузера, такие как окно, история браузера и навигация, чтобы можно было управлять ими из JavaScript.
@@ -19,6 +26,7 @@
 ---
 
 ## Building a DOM
+
 ### Построение DOM дерева.
 
 > Построение DOM дерева начинается с парсинга HTML кода документа браузером. Когда браузер получает HTML документ, он начинает анализировать его и строить дерево элементов. Алгоритм построения DOM-дерева состоит из следующих шагов:
@@ -31,15 +39,46 @@
 
 > В результате выполнения этих шагов, браузер построит дерево DOM, которое точно соответствует разметке HTML документа. После этого JavaScript-код может изменять содержимое страницы, добавлять и удалять элементы или изменять их атрибуты, что позволяет создавать динамические и интерактивные веб-страницы.
 
+### Отличия между innerHTML и innerText
+
+`innerText`:
+
+- Свойство innerText используется для доступа к текстовому содержимому элемента без HTML тегов.
+- При использовании innerText, HTML теги будут проигнорированы, и возвращено будет только текстовое содержимое элемента.
+- Когда вы устанавливаете новое значение с помощью innerText, HTML теги будут экранированы и вставлены как обычный текст.
+
+```html
+<div id="myDiv"><strong>Hello</strong> <span>World</span></div>
+```
+
+```javaScript
+const divElement = document.getElementById('myDiv');
+
+console.log(divElement.innerHTML); // Output: "<strong>Hello</strong> <span>World</span>"
+console.log(divElement.innerText); // Output: "Hello World"
+
+divElement.innerText = 'New Text'; // Установка текстового содержимого
+// Результат: <div id="myDiv">New Text</div>
+```
+
+`Отличия`:
+
+- innerHTML возвращает или устанавливает HTML содержимое элемента, включая его HTML теги.
+- innerText возвращает или устанавливает только текстовое содержимое элемента, игнорируя HTML теги.
+
+> Используйте innerText, когда вам нужно работать только с текстом элемента, и innerHTML — для работы с HTML содержимым элементов.
+
 [Вернуться к началу статьи](#dom)
 
 ---
 
 ## Navigation through DOM elements
+
 ### Навигация по DOM-элементам.
+
 > Объекты Node и Element являются частями иерархии DOM-дерева и используются для навигации по элементам на странице.
 
->`Объект Node` - это базовый объект DOM-дерева, который представляет собой любой элемент на странице. Он содержит все типы узлов, включая элементы, атрибуты, текстовые узлы и комментарии. Объект Node содержит набор методов и свойств, таких как childNodes, parentNode, nextSibling, previousSibling, и т.д., которые можно использовать для навигации и изменения содержимого DOM-дерева.
+> `Объект Node` - это базовый объект DOM-дерева, который представляет собой любой элемент на странице. Он содержит все типы узлов, включая элементы, атрибуты, текстовые узлы и комментарии. Объект Node содержит набор методов и свойств, таких как childNodes, parentNode, nextSibling, previousSibling, и т.д., которые можно использовать для навигации и изменения содержимого DOM-дерева.
 
 > `Объект Element` является производным от объекта Node, представляет элемет на странице и содержит все методы и свойства объекта Node, а также ряд специализированных методов и свойств, которые позволяют получать доступ к атрибутам и CSS-стилям элементов. Например, свойство tagName, которое определяет имя элемента, а методы getAttribute() и setAttribute() позволяют получать и изменять атрибуты элемента.
 
@@ -51,7 +90,6 @@
 - `firstChild/lastChild` : это свойства объекта Node, которые предоставляют доступ к первому/последнему дочернему узлу родительского элемента. Если дочерних узлов у элемента нет, свойство вернет null.
 - `firstElementChild/lastElementChild` : это свойства объекта Element, которые предоставляют доступ к первому/последнему дочернему элементу родительского элемента. Если дочерних элементов нет, свойство вернет null. В отличие от свойств firstChild/lastChild, эти свойства возвращают только элементы, игнорируя текстовые узлы, комментарии и атрибуты.
 
-
 - `getElementById` : это метод объекта document, который позволяет получить элемент с указанным идентификатором из документа. Метод возвращает один элемент, так как идентификатор должен быть уникальным на странице.
 - `getElementsByClassName` : это метод объекта document, который позволяет получить элементы с указанным классом из документа. Метод возвращает коллекцию элементов, соответствующих заданному классу.
 - `getElementsByName` : это метод объекта document, который позволяет получить элементы с указанным именем из документа. Метод возвращает коллекцию элементов, соответствующих заданному имени.
@@ -62,7 +100,9 @@
 > Все эти методы и свойства являются частями API объектной модели документа и используются для навигации по DOM-дереву и получения доступа к содержимому страницы в JavaScript.
 
 ### Добавление, удаление, копирование и вставка элементов и узлов.
+
 > Существует множество способов, которыми можно добавлять, удалять, клонировать и вставлять элементы и узлы в DOM-дерево.
+
 1. Создание элементов: для создания новых элементов в DOM-дереве, необходимо использовать метод `createNode/Element()`.
 2. Добавление элементов: для добавления элементов в DOM-дерево можно использовать методы `appendChild()` и `insertBefore()`. Метод `appendChild()` добавляет новый элемент в конец родительского элемента, а метод `insertBefore()` добавляет новый элемент перед определенным элементом.
 3. Удаление элементов: для удаления элемента из DOM-дерева можно использовать метод `removeChild()`. Этот метод удаляет указанный элемент из дерева DOM.
@@ -72,11 +112,13 @@
 7. Создание текстовых узлов: для создания текстовых узлов в DOM-дереве, необходимо использовать метод `createTextNode()`. Этот метод создает новый текстовый узел, содержащий указанный текст, который можно добавить в DOM-дерево с помощью метода `appendChild()`.
 
 ### Взаимодействие с атрибутами HTML элемента через JS.
+
 > Некоторые элементы имеют специфичные методы для работы с определенными атрибутами. Например, для работы со свойством `value` элемента `input` можно использовать методы `value`, `setAttribute` и `getAttribute`.
+
 ```javascript
-  // Другой способ
-  const link = document.getElementById("myLink");
-  const hrefValue = link.href;
+// Другой способ
+const link = document.getElementById('myLink')
+const hrefValue = link.href
 ```
 
 [Вернуться к началу статьи](#dom)
@@ -84,40 +126,45 @@
 ---
 
 ## CSS in DOM
+
 ### CSS стили в DOM.
+
 > Свойство style у HTML-элемента позволяет добавлять к элементу инлайн-стили или изменять уже существующие. Это позволяет изменять внешний вид элемента динамически, без необходимости изменения CSS-файла.
 
 > Однако, следует помнить, что использование свойства style для инлайн-стилей может сделать код менее модульным, трудным для поддержки, а также усложнить процесс изменения стилей и их масштабирования. Поэтому, инлайн-стили должны быть использованы с умом и в ограниченном количестве.
 
 ### Существует несколько способов задания стилей элементу через JavaScript.
-```javascript
-  // Свойство style
-  const myElement = document.getElementById("myElement");
-  myElement.style.backgroundColor = "green";
-  
-  // Метод setAttribute
-  const myElement = document.getElementById("myElement");
-  myElement.setAttribute("style", "color: red;");
 
-  // Методы класса (class)
-  const myElement = document.getElementById("myElement");
-  myElement.classList.add("myClass");
-  
-  // Использование объектов CSSStyleSheet и CSSStyleRule.
-  const styleSheet = document.createElement('style');
-  document.head.appendChild(styleSheet);
-  styleSheet.sheet.insertRule("#myElement{ background-color: blue; }", 0);
+```javascript
+// Свойство style
+const myElement = document.getElementById('myElement')
+myElement.style.backgroundColor = 'green'
+
+// Метод setAttribute
+const myElement = document.getElementById('myElement')
+myElement.setAttribute('style', 'color: red;')
+
+// Методы класса (class)
+const myElement = document.getElementById('myElement')
+myElement.classList.add('myClass')
+
+// Использование объектов CSSStyleSheet и CSSStyleRule.
+const styleSheet = document.createElement('style')
+document.head.appendChild(styleSheet)
+styleSheet.sheet.insertRule('#myElement{ background-color: blue; }', 0)
 ```
 
 ### window.getComputedStyle().
+
 > `getComputedStyle()` - это метод, которым можно получить вычисленные стили (computed styles) элемента. Вычисленные стили - это фактические значения CSS-свойств элемента после применения всех стилей к элементу. `getComputedStyle()` возвращает объект `CSSStyleDeclaration`, который содержит все вычисленные стили элемента, заданные в CSS-файле или в инлайн-стилях.
 
 ```javascript
-  const myElement = document.getElementById("myElement");
-  const computedStyle = window.getComputedStyle(myElement);
-  const height = computedStyle.height;
-  const width = computedStyle.width;
+const myElement = document.getElementById('myElement')
+const computedStyle = window.getComputedStyle(myElement)
+const height = computedStyle.height
+const width = computedStyle.width
 ```
+
 > В результате компьютерной вычисления метод getComputedStyle () позволяет получить фактические значения CSS-свойств элемента в изображении в браузере, что позволяет работать с ними в JavaScript.
 
 [Вернуться к началу статьи](#dom)
@@ -125,22 +172,246 @@
 ---
 
 ## DocumentFragment
+
 > `DocumentFragment` - это легковесный виртуальный контейнер, который является частью `Document Object Model` (DOM) и используется для хранения, создания и манипулирования фрагментами документа. Он представляет собой связанный с документом область в памяти, которая может содержать дочерние узлы, но не отображается на странице.
 
 > `DocumentFragment` обычно используется как промежуточный контейнер для создания сложных деревьев DOM динамически без привязки к реальному документу. Это позволяет минимизировать количество изменений, которые происходят в реальном документе и улучшить производительность, т.к. изменения, вносимые в `DocumentFragment`, не вызывают перестройку и перерисовку страницы.
 
 > Для создания нового `DocumentFragment` вы можете использовать метод `document.createDocumentFragment()`. Этот метод возвращает новый пустой экземпляр `DocumentFragment`, который вы можете заполнить узлами, используя DOM-методы, такие как `appendChild()` и `insertBefore()`.
-```javascript
-  const myFragment = document.createDocumentFragment();
-  const pElement = document.createElement("p");
-  pElement.textContent = "Это текст в элементе P";
-  myFragment.appendChild(pElement);
 
-  const spanElement = document.createElement("span");
-  spanElement.textContent = "Это текст в элементе SPAN";
-  myFragment.appendChild(spanElement);
+```javascript
+const myFragment = document.createDocumentFragment()
+const pElement = document.createElement('p')
+pElement.textContent = 'Это текст в элементе P'
+myFragment.appendChild(pElement)
+
+const spanElement = document.createElement('span')
+spanElement.textContent = 'Это текст в элементе SPAN'
+myFragment.appendChild(spanElement)
 ```
+
 > DocumentFragment - это полезный DOM-класс, который может быть использован для повышения производительности и улучшения практичности в манипулировании большими объемами документов.
+
+[Вернуться к началу статьи](#dom)
+
+---
+
+## Browser coordinate system
+
+### Система координат в DOM.
+
+> В DOM (Document Object Model), система координат начинается в левом верхнем углу элемента. Это означает, что координаты (0,0) расположены в левом верхнем углу элемента, а ось X увеличивается слева направо, а ось Y увеличивается сверху вниз. Таким образом, при работе с координатами элементов в DOM, (0,0) будет означать точку в левом верхнем углу элемента
+
+### В веб-разработке часто используются различные системы координат в зависимости от контекста.
+
+1. Координаты относительно окна (window): Эти координаты измеряют положение элемента относительно верхнего левого угла видимой области окна браузера. Эти координаты обычно используются для позиционирования элементов на экране в реальном времени или для прокрутки страницы к определенному месту.
+
+2. Координаты относительно документа (document): Эти координаты измеряют положение элемента относительно верхнего левого угла всего документа. Они учитывают прокрутку страницы, поэтому они остаются постоянными, даже когда страница прокручивается. Эти координаты часто используются для позиционирования элементов на странице или для вычисления их относительного расположения друг к другу.
+
+3. Координаты относительно экрана (screen): Эти координаты измеряют положение элемента относительно физических границ экрана устройства. Они могут использоваться для адаптации элементов в зависимости от размера экрана устройства.
+
+### Получение размеров видимой части окна браузера.
+
+> Для получения размеров видимой части окна (области просмотра) в веб-разработке можно использовать объект window в JavaScript. Вот несколько способов, с помощью которых можно получить размеры видимой части окна:
+
+- Свойства innerWidth и innerHeight объекта window:
+
+```JavaScript
+const windowWidth = window.innerWidth;
+const windowHeight = window.innerHeight;
+console.log(`Width: ${windowWidth}, Height: ${windowHeight}`);
+```
+
+- Методы document.documentElement.clientWidth и document.documentElement.clientHeight:
+
+```JavaScript
+const documentWidth = document.documentElement.clientWidth;
+const documentHeight = document.documentElement.clientHeight;
+console.log(`Width: ${documentWidth}, Height: ${documentHeight}`);
+```
+
+- Методы document.body.clientWidth и document.body.clientHeight:
+
+```JavaScript
+const bodyWidth = document.body.clientWidth;
+const bodyHeight = document.body.clientHeight;
+console.log(`Width: ${bodyWidth}, Height: ${bodyHeight}`);
+```
+
+- Свойства screen.width и screen.height для размеров экрана:
+
+```JavaScript
+const screenWidth = screen.width;
+const screenHeight = screen.height;
+console.log(`Screen Width: ${screenWidth}, Screen Height: ${screenHeight}`);
+```
+
+### Получение координат определенного элемента.
+
+> Для получения координат определенного элемента на веб-странице вам понадобно использовать методы из объекта Element и объекта DOMRect. Вот пример кода на JavaScript, который покажет, как получить координаты определенного элемента:
+
+- С использованием метода getBoundingClientRect():
+
+```javascript
+const element = document.getElementById('yourElementId') // Замените 'yourElementId' на ID вашего элемента
+const rect = element.getBoundingClientRect()
+
+const top = rect.top
+const left = rect.left
+const bottom = rect.bottom
+const right = rect.right
+
+console.log(`Top: ${top}, Left: ${left}, Bottom: ${bottom}, Right: ${right}`)
+```
+
+- С использованием свойств offsetTop и offsetLeft:
+
+```javascript
+const element = document.getElementById('yourElementId') // Замените 'yourElementId' на ID вашего элемента
+
+const top = element.offsetTop
+const left = element.offsetLeft
+
+console.log(`Top: ${top}, Left: ${left}`)
+```
+
+### Программно прокрутить документ до нужного элемента.
+
+> Для программного прокручивания документа до определенного элемента вы можете использовать методы объекта Element или объекта Window. Вот пример кода на JavaScript, который покажет, как это можно сделать:
+
+- Используя метод scrollIntoView() у элемента:
+
+```javascript
+const element = document.getElementById('yourElementId') // Замените 'yourElementId' на ID вашего элемента
+element.scrollIntoView({ behavior: 'smooth', block: 'start' }) // Прокрутка к началу элемента с плавным эффектом
+```
+
+- Прокрутка до определенных координат с помощью window.scroll() или window.scrollTo():
+
+```JavaScript
+const element = document.getElementById('yourElementId'); // Замените 'yourElementId' на ID вашего элемента
+const yOffset = 0; // Смещение в пикселях, если нужно дополнительное смещение
+
+window.scroll({
+    top: element.offsetTop + yOffset,
+    left: 0,
+    behavior: 'smooth' // Для плавной прокрутки
+});
+```
+
+[Вернуться к началу статьи](#dom)
+
+---
+
+## Event bubbling and Event capturing
+
+> `Event bubbling` и `event capturing` являются двумя фазами обработки событий в DOM (Document Object Model) в контексте всплытия событий.
+
+`Event capturing` (захват события):
+
+- В данной фазе обработки событий событие сначала захватывается на самом верхнем (внешнем) элементе дерева DOM и затем событие спускается по цепочке от родительского элемента к целевому элементу.
+- Этот процесс срабатывает до того, как событие достигнет целевого (например, кликнутого) элемента.
+
+`Event bubbling` (всплытие события):
+
+- После завершения фазы захвата события, событие начинает "всплывать" от целевого элемента обратно к самому верхнему (внешнему) элементу DOM.
+- Это означает, что после обработки события на целевом элементе, событие снова обрабатывается на каждом родительском элементе до самого верхнего уровня DOM.
+
+> `Event capturing` и `event bubbling` позволяют вам обрабатывать события на различных уровнях иерархии элементов DOM. Обычно события всплытия используются чаще, но при необходимости можно использовать и захват событий для определенных случаев.
+
+[Вернуться к началу статьи](#dom)
+
+---
+
+## Delegating events to the DOM
+
+> Делегирование событий в DOM — это техника обработки событий, которая заключается в привязке обработчика событий к одному общему родительскому элементу, а не к каждому дочернему элементу отдельно. Когда событие происходит на дочернем элементе, оно всплывает до его родительского элемента, который затем может обработать это событие.
+
+Преимущества использования делегирования событий:
+
+- Эффективность: При использовании делегирования нужно устанавливать только один обработчик на родительский элемент, что снижает нагрузку на браузер.
+- Динамические элементы: Делегирование позволяет обрабатывать события для элементов, которые были добавлены динамически и не существовали при загрузке страницы.
+
+Пример использования делегирования событий:
+
+```javascript
+const parentElement = document.getElementById('parentElementId') // Получаем родительский элемент
+
+parentElement.addEventListener('click', function (event) {
+	if (event.target.tagName === 'BUTTON') {
+		// Проверяем, что целевым элементом является кнопка
+		console.log('Кликнули на кнопку с текстом:', event.target.textContent)
+	}
+})
+```
+
+> В этом примере обработчик события клика привязывается к родительскому элементу, и затем проверяется, была ли нажата кнопка. Это позволяет легко обрабатывать события от множества дочерних элементов, не привязывая обработчики к каждому из них.
+
+[Вернуться к началу статьи](#dom)
+
+---
+
+## Methods getElementsBy and querySelector.
+
+> Процесс поиска элементов в DOM с помощью методов `getElementsBy*` и `querySelector` имеет свои особенности и отличия в скорости выполнения. Вот краткое объяснение каждого из них:
+
+Методы getElementsBy\*:
+
+- getElementsByClassName, getElementsByTagName, getElementsByName возвращают коллекцию HTML-элементов, удовлетворяющих условия поиска.
+- Эти методы возвращают живую коллекцию, что означает, что любые изменения в DOM автоматически отражаются в коллекции.
+- Методы getElementsBy\* медленнее по сравнению с методом querySelector, так как они требуют линейного прохода по всем элементам в поиске совпадений.
+
+Метод querySelector:
+
+- querySelector возвращает первый элемент в документе, который соответствует указанному селектору.
+- querySelectorAll возвращает все элементы в документе, которые соответствуют указанному селектору в виде статической коллекции NodeList.
+- querySelector и querySelectorAll позволяют использовать CSS-селекторы для точного поиска элементов.
+- querySelector и querySelectorAll могут быть быстрее поиска элементов, особенно при сложных селекторах, поскольку браузеры используют внутренние механизмы для оптимизации поиска.
+
+Какие методы быстрее и почему:
+
+- В общем, методы querySelector и querySelectorAll могут быть более эффективными для точного поиска элементов с использованием сложных CSS-селекторов.
+- Если вам нужно найти несколько элементов по классу или тегу, методы querySelector и querySelectorAll могут быть предпочтительнее по скорости выполнения.
+
+[Вернуться к началу статьи](#dom)
+
+---
+
+## Methods innerHTML and outerHTML
+
+> Свойства `innerHTML` и `outerHTML` в JavaScript позволяют получать и устанавливать содержимое HTML элемента. Вот их основные характеристики и различия:
+
+`innerHTML`:
+
+- Свойство innerHTML используется для доступа к HTML содержимому дочерних элементов указанного элемента.
+- Его значение может быть прочитано и изменено, что позволяет динамически обновлять содержимое элемента.
+- При установке нового значения через innerHTML, происходит перезапись содержимого элемента, включая его дочерние элементы.
+
+```javaScript
+const divElement = document.getElementById('myDiv');
+console.log(divElement.innerHTML); // Получение HTML содержимого
+divElement.innerHTML = '<p>Новый текст</p>'; // Установка нового HTML содержимого
+```
+
+`outerHTML`:
+
+- Свойство outerHTML позволяет получить HTML содержимое элемента, включая сам элемент.
+- При присвоении нового значения через outerHTML элемент полностью заменяется новым HTML кодом.
+- Это свойство включает как сам элемент, так и его содержимое.
+
+```javaScript
+const divElement = document.getElementById('myDiv');
+console.log(divElement.outerHTML); // Получение HTML содержимого с самим элементом
+divElement.outerHTML = '<div id="myNewDiv"><p>Новый текст</p></div>'; // Замена элемента новым HTML
+```
+
+`Важные нюансы`:
+
+- Использование innerHTML и outerHTML может повлечь за собой потерю состояния привязанных обработчиков событий и данных.
+- При вставке HTML содержимого через innerHTML или outerHTML, следует быть осторожным, чтобы не создать уязвимость XSS (межсайтового скриптинга).
+- Изменения в outerHTML могут привести к полной перерисовке элемента, что может быть более ресурсозатратным, чем изменение innerHTML.
+
+> Обычно использование данных свойств оправдано при необходимости динамического обновления содержимого элементов на странице, но стоит помнить о возможных нюансах и осторожно применять эти методы
 
 [Вернуться к началу статьи](#dom)
 
