@@ -11,6 +11,7 @@
 - [Observable. Отличия от Promise.](#observable-vs-promise)
 - [Динамические элементы](#dynamic-elements)
 - [Dependency Injection](#dependency-injection)
+- [Injection Token](#injection-token)
 - [Маршрутизация в Angular](#routing-in-angular)
 - [Директивы ng-template, ngTemplateOutlet, ng-container, ng-content](#ng-template-ngtemplateoutlet-ng-container-ng-content)
 - [Организация шаринга данных. NgRx](#organization-of-data-sharing)
@@ -20,6 +21,7 @@
 - [Virtual DOM](#virtual-dom)
 - [Опция trackBy](#trackby)
 - [Reactive Forms в Angular](#reactive-forms-angular)
+- [Event Bus (Шина событий)](#event-bus)
 
 ## Angular
 
@@ -497,6 +499,71 @@ ViewContainerRef методы:
 - `@SkipSelf()` позволяет пропустить инжектор текущего уровня и начать поиск зависимости со следующего далее по иерархии инжектора.
 - `@Host()` обозначает текущий уровень как последний при поиске зависимости, относительно которой он применяется. Часто @Host() используется совместно с декоратором
 - `@Optional()` задает null в качестве значения внешней зависимости, если она не доступна на текущем уровне или вовсе отсутствует, и не генерирует исключение.
+
+[Вернуться к началу статьи](#angular)
+
+---
+
+## Injection Token
+
+В Angular, `Injection Token` - это специальный тип данных, который представляет собой объект, используемый для инжектирования зависимостей в Angular приложениях. Injection Token определяет, каким образом Angular должен проводить внедрение зависимостей для определенного провайдера сервиса или объекта.
+
+- Пример :
+
+```ts
+import { Injectable, InjectionToken, Inject } from '@angular/core'
+
+// Создаем Injection Token
+export const API_URL = new InjectionToken<string>('ApiUrl')
+
+// Создаем сервис, который будет использовать Injection Token
+@Injectable()
+export class ApiService {
+	constructor(@Inject(API_URL) private apiUrl: string) {}
+
+	get(endpoint: string) {
+		return fetch(`${this.apiUrl}/${endpoint}`).then(response => response.json())
+	}
+}
+```
+
+- Пример :
+
+```ts
+type PluginEventKeys = 'OPEN' | 'CLOSE' | 'CHANGE' | 'DEFAULT'
+
+type PluginEvent = {
+	[key in PluginEventKeys]: string
+}
+
+export type { PluginEvent }
+
+/////////////////////////////////////////////////////
+
+import { PluginEvent } from './types'
+
+const EVENTS: PluginEvent = {
+	OPEN: 'open',
+	CLOSE: 'close',
+	CHANGE: 'change',
+	DEFAULT: '',
+}
+
+export { EVENTS }
+
+/////////////////////////////////////////////////////
+
+import { InjectionToken } from '@angular/core'
+import { PluginEvent } from '../types'
+import { EVENTS } from '../consts'
+
+// Создаем Injection Token
+const EVENT_COMPARISON_TOKEN = new InjectionToken<PluginEvent>('Plugin event', {
+	factory: () => EVENTS,
+})
+
+export { EVENT_COMPARISON_TOKEN }
+```
 
 [Вернуться к началу статьи](#angular)
 
@@ -1043,6 +1110,94 @@ export class FormArrayExampleComponent {
 ```
 
 > Для использования `Reactive Forms` в Angular необходимо импортировать модуль `ReactiveFormsModule` и добавить его в список импортов в модуле приложения.
+
+[Вернуться к началу статьи](#angular)
+
+---
+
+## Event Bus
+
+В Angular `Event Bus` - это паттерн проектирования, который позволяет компонентам взаимодействовать друг с другом через отправку и прослушивание событий. Event Bus представляет собой глобальный шину событий, через которую компоненты могут обмениваться данными или уведомлениями, не имея прямой связи друг с другом.
+
+Для создания `Event Bus` в Angular вы можете использовать сервис с помощью RxJS `Subject` или `BehaviorSubject`. Этот сервис будет служить в качестве посредника для отправки и прослушивания событий.
+
+Пример простой реализации Event Bus с использованием RxJS Subject:
+
+```ts
+import { Injectable } from '@angular/core'
+import { Subject } from 'rxjs'
+
+@Injectable({
+	providedIn: 'root',
+})
+export class EventBusService {
+	private eventBus = new Subject<any>()
+
+	emit(event: any) {
+		this.eventBus.next(event)
+	}
+
+	on(eventType: any) {
+		return this.eventBus
+			.asObservable()
+			.pipe(filter((event: any) => event.type === eventType))
+	}
+}
+```
+
+- Еще пример :
+
+```ts
+export interface IEventBus {
+	on<DetailType>(
+		type: string,
+		listener: (event: CustomEvent<DetailType>) => void
+	): void
+	once<DetailType>(
+		type: string,
+		listener: (event: CustomEvent<DetailType>) => void
+	): void
+	off<DetailType>(
+		type: string,
+		listener: (event: CustomEvent<DetailType>) => void
+	): void
+	emit<DetailType>(type: string, detail?: DetailType): void
+}
+
+////////////////////////////////////////////////////////
+
+import { IEventBus } from '../interfaces'
+
+/**
+ * EventBus (Шина событий) служит для связи между микросервисами или микрофронтендами.
+ * Event Bus - это механизм, который позволяет различным компонентам или сервисам обмениваться событиями или сообщениями асинхронно.
+ */
+export class EventBus implements IEventBus {
+	private eventTarget: EventTarget
+
+	constructor(description = '') {
+		this.eventTarget = document.appendChild(document.createComment(description))
+	}
+
+	emit<T>(type: string, detail?: T): void {
+		this.eventTarget.dispatchEvent(new CustomEvent(type, { detail }))
+	}
+
+	off<T>(type: string, listener: (event: CustomEvent<T>) => void): void {
+		this.eventTarget.removeEventListener(type, listener as EventListener)
+	}
+
+	on<T>(type: string, listener: (event: CustomEvent<T>) => void): void {
+		this.eventTarget.addEventListener(type, listener as EventListener)
+	}
+
+	once<T>(type: string, listener: (event: CustomEvent<T>) => void): void {
+		this.eventTarget.addEventListener(type, listener as EventListener, {
+			once: true,
+		})
+	}
+}
+```
 
 [Вернуться к началу статьи](#angular)
 
