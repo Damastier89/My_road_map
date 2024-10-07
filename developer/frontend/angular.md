@@ -25,6 +25,7 @@
 - [Безопасность в Angular](#security-in-angular)
 - [Angular Universal](#angular-universal)
 - [Angular Service Worker](#angular-service-workers)
+- [Angular ngZone](#angular-ngzone)
 
 ## Angular
 
@@ -247,8 +248,7 @@ import { Component } from '@angular/core'
 
 @Component({
 	selector: 'app-parent',
-	template:
-		'<app-child (messageEvent)="receiveMessage($event)"></app-child><p>{{ message }}</p>',
+	template: '<app-child (messageEvent)="receiveMessage($event)"></app-child><p>{{ message }}</p>',
 })
 export class ParentComponent {
 	message: string
@@ -1081,10 +1081,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms'
 	template: `
 		<form [formGroup]="form">
 			<div formArrayName="items">
-				<div
-					*ngFor="let item of items.controls; let i = index"
-					[formGroupName]="i"
-				>
+				<div *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
 					<input formControlName="name" />
 					<input formControlName="age" />
 				</div>
@@ -1144,9 +1141,7 @@ export class EventBusService {
 	}
 
 	on(eventType: any) {
-		return this.eventBus
-			.asObservable()
-			.pipe(filter((event: any) => event.type === eventType))
+		return this.eventBus.asObservable().pipe(filter((event: any) => event.type === eventType))
 	}
 }
 ```
@@ -1155,18 +1150,9 @@ export class EventBusService {
 
 ```ts
 export interface IEventBus {
-	on<DetailType>(
-		type: string,
-		listener: (event: CustomEvent<DetailType>) => void
-	): void
-	once<DetailType>(
-		type: string,
-		listener: (event: CustomEvent<DetailType>) => void
-	): void
-	off<DetailType>(
-		type: string,
-		listener: (event: CustomEvent<DetailType>) => void
-	): void
+	on<DetailType>(type: string, listener: (event: CustomEvent<DetailType>) => void): void
+	once<DetailType>(type: string, listener: (event: CustomEvent<DetailType>) => void): void
+	off<DetailType>(type: string, listener: (event: CustomEvent<DetailType>) => void): void
 	emit<DetailType>(type: string, detail?: DetailType): void
 }
 
@@ -1426,9 +1412,7 @@ export class MyComponent {
 	htmlContent: SafeHtml
 
 	constructor(private sanitizer: DomSanitizer) {
-		this.htmlContent = this.sanitizer.bypassSecurityTrustHtml(
-			'<p>HTML содержимое</p>'
-		)
+		this.htmlContent = this.sanitizer.bypassSecurityTrustHtml('<p>HTML содержимое</p>')
 	}
 }
 ```
@@ -1689,6 +1673,137 @@ constructor(private sanitizer: DomSanitizer) {
   В зависимости от возможностей различных браузеров, поддержка сервис-воркеров может быть различной. Некоторые функции могут не быть доступны во всех браузерах, что ограничивает их использование на определенных платформах.
 
 > Хотя сервис-воркеры предоставляют превосходные возможности для улучшения производительности и оффлайн-поддержки веб-приложений, важно учитывать эти ограничения при их использовании для обеспечения корректного и безопасного функционирования приложений.
+
+[Вернуться к началу статьи](#angular)
+
+---
+
+## Angular ngZone
+
+> В Angular, `Zone` (или Zone.js) — это библиотека, которая помогает управлять асинхронными операциями и отслеживать изменения в приложении. Она позволяет автоматически обнаруживать изменения в состоянии приложения и инициировать обновление представления, когда это необходимо.
+
+> `ngZone` в Angular — это сервис, который предоставляет API для работы с механизмом обнаружения изменений, основанным на Zone.js. Он позволяет разработчикам управлять зоной выполнения и контролировать, когда и как выполняется обнаружение изменений в приложении.
+
+Основные функции ngZone:
+
+- `Обнаружение изменений`: ngZone автоматически отслеживает асинхронные операции и инициирует обновление представления, когда это необходимо. Это позволяет избежать ручного вызова методов обновления.
+
+- `Вход и выход из зоны`: Вы можете явно войти в ngZone с помощью метода run(), который позволяет выполнять код в пределах Angular-зоны, где будут автоматически отслеживаться изменения. Кроме того, можно использовать runOutsideAngular(), чтобы выполнять код вне Angular-зоны, тем самым отключая автоматическое обнаружение изменений, что может быть полезно для повышения производительности в некоторых сценариях.
+
+- `Производительность`: Если вы знаете, что определенный код не должен инициировать обнаружение изменений — например, в обработчиках событий или долгих вычислениях — использование runOutsideAngular() может помочь избежать ненужных обновлений интерфейса и улучшить производительность приложения. ⚡️
+
+- `Обработка ошибок`: ngZone также предоставляет механизм для перехвата и обработки ошибок, происходящих в асинхронных операциях. Это может быть полезно для централизованной обработки ошибок в вашем приложении.
+
+> В Angular есть несколько хуков жизненного цикла зоны, которые позволяют вам выполнять код в ответ на различные события и изменения состояния в вашей зоне. Вот основные из них:
+
+1. `onEnter`
+   Этот хук вызывается при входе в зону. Вы можете использовать его для выполнения кода, как только начнется выполнение асинхронной операции.
+
+2. `onLeave`
+   Вызывается при выходе из зоны. Это полезно для выполнения действий, когда завершены асинхронные операции, и вам нужно выполнить некоторые завершающие действия.
+
+3. `onStable`
+   Этот хук срабатывает, когда все асинхронные операции завершены, и система вернулась в стабильное состояние. Вы можете использовать его для выполнения логики, которая должна выполняться после завершения всех обновлений.
+
+4. `onUnstable`
+   Вызывается, когда зона считает, что начала обрабатываться асинхронная активность. Это может быть полезно для отслеживания начала процесса, когда начинаются долгие операции.
+
+5. `onError`
+   Этот хук срабатывает, когда возникает ошибка в приложении. Он может быть использован для глобальной обработки ошибок.
+
+```typescript
+import { NgZone } from '@angular/core';
+
+constructor(private ngZone: NgZone) {
+  this.ngZone.run(() => {
+    // Код при входе в зону
+    console.log('Entered zone');
+  });
+
+  this.ngZone.onStable.subscribe(() => {
+    // Код, который выполняется, когда все асинхронные задачи завершены
+    console.log('Zone is stable');
+  });
+
+  this.ngZone.onError.subscribe((error) => {
+    // Обработка ошибок
+    console.error('An error occurred:', error);
+  });
+}
+```
+
+### Методы NgZone для управления обнаружением изменений в Angular.
+
+1. `run()`
+   Этот метод позволяет выполнить код внутри зоны. Angular будет отслеживать любые изменения, вызванные этим кодом, и обновлять представление соответственно.
+
+```typescript
+this.ngZone.run(() => {
+	// Код, который должен быть выполнен в зоне
+})
+```
+
+2. `runOutsideAngular()`
+   Этот метод позволяет выполнить код вне зоны, что предотвращает ненужные детекции изменений при выполнении асинхронных операций. Это полезно для улучшения производительности, когда вам не нужно обновлять состояние Angular.
+
+```typescript
+this.ngZone.runOutsideAngular(() => {
+	// Код, который выполняется вне зоны
+})
+```
+
+3. `onStable`
+   Этот метод возвращает Observable, который позволяет подписаться на события, когда зона переходит в стабильное состояние после завершения всех асинхронных задач. Это полезно для выполнения кода после завершения всех изменений.
+
+```typescript
+this.ngZone.onStable.subscribe(() => {
+	// Код, который выполняется, когда зона стабильна
+})
+```
+
+4. `onUnstable`
+   Этот метод также возвращает Observable и позволяет подписаться на события, когда зона становится нестабильной. Это может быть полезно для отслеживания начала выполнения асинхронных операций.
+
+```typescript
+this.ngZone.onUnstable.subscribe(() => {
+	// Код, который выполняется, когда зона нестабильна
+})
+```
+
+5. `runGuarded()`
+   Этот метод позволяет выполнить код внутри зоны с защитой от ошибок. Если в этом коде возникает ошибка, она будет поймана и передана, а не вызовет сбой приложения.
+
+```typescript
+this.ngZone.runGuarded(() => {
+	// Код, который выполняется внутри зоны с защитой от ошибок
+})
+```
+
+> Настройки zone.js в Angular могут быть изменены в зависимости от ваших требований по производительности и специфики приложения.
+
+- Настройка через zone.js API (методы).
+- Настроить `zone.js` в файле `polyfills.ts`, добавив или изменив параметры.
+- Можно создать пользовательские зоны.
+
+```typescript
+import 'zone.js'
+import { Zone } from 'zone.js'
+
+const myCustomZone = Zone.current.fork({
+	name: 'myCustomZone',
+	onSchedule: (parentZoneDelegate, currentZone, targetZone, zoneSpec) => {
+		console.log('Scheduled in myCustomZone')
+		return parentZoneDelegate.scheduleTask(targetZone, zone)
+	},
+})
+
+// Использование вашей зоны
+myCustomZone.run(() => {
+	// Ваш код
+})
+```
+
+- Отключение zone.js (не рекомендуется).
 
 [Вернуться к началу статьи](#angular)
 
