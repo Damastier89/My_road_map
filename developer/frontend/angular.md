@@ -424,6 +424,85 @@ export class AppModule {}
 </div>
 ```
 
+## @Directive.providers
+
+> Декоратор @Directive в Angular используется для создания директив, которые могут изменять поведение элементов в шаблоне. Параметр providers позволяет указать зависимости, которые будут доступны только для данной директивы. Это позволяет создавать экземпляры сервисов локально для каждой директивы, а не использовать глобальные экземпляры.
+
+```typescript
+// Service
+import { Injectable } from '@angular/core'
+
+@Injectable()
+export class ExampleService {
+	count = 0
+
+	increment() {
+		this.count++
+	}
+}
+
+// Directive
+import { Directive, HostListener } from '@angular/core'
+import { ExampleService } from './example.service'
+
+@Directive({
+	selector: '[appExampleDirective]',
+	providers: [ExampleService], // Локальный провайдер
+})
+export class ExampleDirective {
+	constructor(private exampleService: ExampleService) {}
+
+	@HostListener('click')
+	onClick() {
+		this.exampleService.increment()
+		console.log(`Count: ${this.exampleService.count}`) // Локально отслеживаемое состояние
+	}
+}
+```
+
+`Важно помнить`
+
+- Локальность: Использование `providers` создаст новый экземпляр сервиса для каждого элемента, который использует директиву, что не всегда нужно. Если вам нужен один общий экземпляр, лучше использовать провайдер в корневом модуле или в компоненте.
+
+- Производительность: Если сервисы имеют тяжелую начальную загрузку, создание их экземпляров для каждой директивы может негативно сказаться на производительности приложения.
+
+### @Component.viewProviders
+
+> Декоратор `@Component` в Angular также имеет параметр `viewProviders`, который используется для определения сервисов, доступных только для дочерних компонентов и представлений (views) текущего компонента. Главное отличие между providers и viewProviders заключается в области видимости созданных сервисов.
+
+```typescript
+// Сервис
+import { Injectable } from '@angular/core'
+
+@Injectable()
+export class ChildService {
+	message = 'Hello from Child Service!'
+}
+
+// Родительский компонент
+import { Component } from '@angular/core'
+import { ChildService } from './child.service'
+
+@Component({
+	selector: 'app-parent',
+	template: `<app-child></app-child>`,
+	viewProviders: [ChildService], // Доступно только дочерним компонентам
+})
+export class ParentComponent {}
+
+// Дочерний компонент
+import { Component } from '@angular/core'
+import { ChildService } from './child.service'
+
+@Component({
+	selector: 'app-child',
+	template: `<p>{{ childService.message }}</p>`,
+})
+export class ChildComponent {
+	constructor(public childService: ChildService) {}
+}
+```
+
 [Вернуться к началу статьи](#angular)
 
 ---
