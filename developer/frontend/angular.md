@@ -29,6 +29,7 @@
 - [Angular Internationalization](#internationalization)
 - [Запуска обнаружения изменений в Angular](#starting-change-detection-angular)
 - [Оптимизация производительность асинхронных валидаторов в Angular](#optimising-the-performance-of-asynchronous-validators)
+- [Автономные компоненты (Standalone)](#standalone)
 
 ## Angular
 
@@ -317,12 +318,14 @@ ng generate my-library:my-schematic --name=my-component
 
 ## Directives. Types of directives
 
-Директивы используются для изменения внешнего вида или поведения элемента DOM.
-Директива представляет класс с директивными метаданными. В TypeScript для прикрепления метаданных к классу применяется декоратор `@Directive`.
+> Директивы используются для изменения внешнего вида или поведения элемента DOM.
+> Директива представляет класс с директивными метаданными. В TypeScript для прикрепления метаданных к классу применяется декоратор `@Directive`.
+
 В Angular есть три типа директив:
 
 - `Компоненты`: компонент по сути также является директивой, а декоратор `@Component` расширяет возможности декоратора `@Directive` с помощью добавления функционала по работе с шаблонами.
 - `Собственные`: Директива - это обычный класс на TS, к которому применяется декоратор Directive, соответственно нам надо импортировать эту директиву из "angular/core". При применении декоратора @Directive необходимо определить селектор CSS, с которым будет ассоциирована директива. Селектор CSS для атрибута должен определяться в квадратных скобках. Надо подключить директиву в AppModule.
+
 - `Структурные`: они изменяют структуру DOM с помощью добавления, изменения или удаления элементов html. Например, это директивы `ngFor` и `ngIf`.
   Директива `ngIf` позволяет удалить или, наоборот, добавить элемент при определенном условии.
   Директива `ngFor` позволяет перебрать в шаблоне элементы массива.
@@ -344,11 +347,81 @@ ng generate my-library:my-schematic --name=my-component
   <div [ngClass]="['label', 'label-small']">Some text</div>
 ```
 
-Директива `ngStyle` позволяет задать набор стилей, которые применяются к элементу. В качестве значения директива принимает js-объект, в котором ключи - названия свойств CSS.
+> Директива `ngStyle` позволяет задать набор стилей, которые применяются к элементу. В качестве значения директива принимает js-объект, в котором ключи - названия свойств CSS.
 
 ```HTML
   <div [ngStyle]="elementStyles">Some text</div>
   <div [ngStyle]="{color: 5 < 10 ? 'green' ? 'red' }">Some text</div>
+```
+
+## Экспорт связанных директив.
+
+1. Создайте компоненты и директивы:
+
+```typescript
+// DirectiveA
+import { Directive, ElementRef, Renderer2 } from '@angular/core'
+
+@Directive({
+	selector: '[appDirectiveA]',
+})
+export class DirectiveA {
+	constructor(el: ElementRef, renderer: Renderer2) {
+		renderer.setStyle(el.nativeElement, 'color', 'blue') // Применение стилей или логики
+	}
+}
+
+// DirectiveB
+import { Directive, ElementRef, Renderer2 } from '@angular/core'
+
+@Directive({
+	selector: '[appDirectiveB]',
+})
+export class DirectiveB {
+	constructor(el: ElementRef, renderer: Renderer2) {
+		renderer.setStyle(el.nativeElement, 'font-weight', 'bold') // Применение стилей или логики
+	}
+}
+```
+
+2. Создайте модуль для директив:
+
+```typescript
+import { NgModule } from '@angular/core'
+import { DirectiveA } from './directive-a.directive'
+import { DirectiveB } from './directive-b.directive'
+
+@NgModule({
+	declarations: [DirectiveA, DirectiveB],
+	exports: [DirectiveA, DirectiveB],
+})
+export class SharedDirectivesModule {}
+```
+
+3. Создайте основной модуль приложения и импортируйте модуль директив:
+
+```typescript
+import { NgModule } from '@angular/core'
+import { BrowserModule } from '@angular/platform-browser'
+import { AppComponent } from './app.component'
+import { SharedDirectivesModule } from './shared-directives.module'
+
+@NgModule({
+	declarations: [AppComponent],
+	imports: [
+		BrowserModule,
+		SharedDirectivesModule, // Импортируем модуль с директивами
+	],
+})
+export class AppModule {}
+```
+
+4. Используйте директивы в шаблонах:
+
+```HTML
+<div appDirectiveA appDirectiveB>
+  Этот текст будет синим и жирным.
+</div>
 ```
 
 [Вернуться к началу статьи](#angular)
@@ -2445,6 +2518,124 @@ this.form
 
 ```html
 <input [(ngModel)]="fieldValue" [ngModelOptions]="{ updateOn: 'blur' }" />
+```
+
+[Вернуться к началу статьи](#angular)
+
+---
+
+## Standalone
+
+> Автономный компонент `Standalone Component` в Angular — это компонент, который может существовать независимо от других компонентов и модулей. Он не требует объявления в каком-либо модуле, что упрощает структуру приложения и делает компоненты более переиспользуемыми.
+
+```npm
+ng generate component имя-компонента --standalone
+```
+
+```typescript
+import { Component } from '@angular/core'
+
+@Component({
+	selector: 'app-standalone',
+	template: `<h1>Hello, Standalone Component!</h1>`,
+	standalone: true, // Указвыет что данный компонент будет автономным
+	providers: [], // Импортируйте другие Service и Module для использоваия
+	imports: [ExampleComponent], // Импортируйте другие Component для использоваия
+})
+export class StandaloneComponent {}
+```
+
+> В Angular можно использовать автономные компоненты `standalone components` внутри модулей, созданных с помощью `NgModule`
+
+```typescript
+// Создать компонент
+import { Component } from '@angular/core'
+
+@Component({
+	selector: 'app-autonomous',
+	template: `<h1>Автономный компонент!</h1>`,
+	standalone: true,
+})
+export class AutonomousComponent {}
+
+// Добавить его в модуль
+
+import { NgModule } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { AutonomousComponent } from './autonomous.component'
+
+@NgModule({
+	declarations: [],
+	imports: [
+		CommonModule,
+		AutonomousComponent, // Импортируем автономный компонент
+	],
+	exports: [AutonomousComponent],
+})
+export class ExampleModule {}
+```
+
+> Чтобы лениво загрузить автономный компонент в `Angular`, можно использовать механизмы маршрутизации, которые поддерживают ленивую загрузку модулей.
+
+1. Создайте автономный компонент
+
+```typescript
+import { Component } from '@angular/core'
+
+@Component({
+	selector: 'app-autonomous',
+	template: `<h1>Автономный компонент загружен!</h1>`,
+	standalone: true,
+})
+export class AutonomousComponent {}
+```
+
+2. Создайте модуль для ленивой загрузки
+
+```typescript
+import { NgModule } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { RouterModule } from '@angular/router'
+import { AutonomousComponent } from './autonomous.component'
+
+@NgModule({
+	declarations: [],
+	imports: [
+		CommonModule,
+		RouterModule.forChild([{ path: '', component: AutonomousComponent }]), // Ленивое подключение
+	],
+	exports: [],
+})
+export class AutonomousModule {}
+```
+
+3. Настройте маршрутизацию
+
+```typescript
+import { NgModule } from '@angular/core'
+import { RouterModule, Routes } from '@angular/router'
+
+const routes: Routes = [
+	{
+		path: 'autonomous',
+		loadChildren: () => import('./path-to/autonomous.module').then(m => m.AutonomousModule),
+	},
+]
+
+@NgModule({
+	imports: [RouterModule.forRoot(routes)],
+	exports: [RouterModule],
+})
+export class AppRoutingModule {}
+```
+
+4. Используйте маршрутизацию в приложении
+
+```HTML
+<nav>
+  <a routerLink="/autonomous">Перейти к автономному компоненту</a>
+</nav>
+<router-outlet></router-outlet>
 ```
 
 [Вернуться к началу статьи](#angular)
