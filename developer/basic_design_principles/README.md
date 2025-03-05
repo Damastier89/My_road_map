@@ -1,0 +1,2 @@
+- [Объектно-ориентированное программирование](./object_oriented_programming.md)
+- [Базовые принципы проектирования](./basic_design_principles.md)
