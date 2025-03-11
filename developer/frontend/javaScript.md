@@ -19,6 +19,7 @@
 - [Memoization](#memoization)
 - [Symbol](#symbol)
 - [Promise](#promise)
+- [Асинхронность](#asynchrony)
 
 ## Данные
 
