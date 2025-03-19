@@ -2,6 +2,7 @@
 
 - [ALGORITHMS](./algorithms.md)
 - [ANGULAR](./angular.md)
+- [API](./api.md)
 - [ASSEMBLY-SYSTEM.md](./assembly-systems.md)
 - [CREATE LIBRARY](./create-library.md)
 - [CSS](./css.md)
