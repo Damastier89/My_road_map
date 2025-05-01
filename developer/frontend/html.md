@@ -2,7 +2,7 @@
 
 - [HTML5](#html5)
 - [Doctype](#doctype)
-- [Tegs](#tegs)
+- [Teg](#teg)
 - [Inline-elements](#inline-elements)
 - [Таблицы](#table)
 - [Checkbox and Radiobutton](#checkbox-and-radiobutton)
@@ -42,7 +42,9 @@
 
 ---
 
-## Tegs
+## Teg
+
+> Teg - структурная единица для html разметки. У teg есть определенные атрибуты.
 
 ### Какие есть отличия у тегов div, p, span, a и т.д.
 
